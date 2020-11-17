@@ -14,7 +14,7 @@ pub mod model {
     }
 
     //```it describes an empty cell
-    #[derive(Debug, Clone, Default, Eq, PartialEq)]
+    #[derive(Debug, Clone, Default)]
     pub struct EmptyCell {
         pub row: usize,
         pub column: usize,

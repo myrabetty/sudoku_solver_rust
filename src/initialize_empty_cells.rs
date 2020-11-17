@@ -2,6 +2,7 @@ pub(crate) mod initialize_empty_cells {
     use ndarray::Array2;
 
     use crate::model::model::{EmptyCell, EmptyCellFunctions, GridFunctions, NonEmptyCell};
+    use crate::utilities::utilities::iters_equal_anyorder;
 
     // ```given a grid returns for each empty cell the possible values.
     pub fn set_allowed_values(grid: &Array2<NonEmptyCell>) -> Vec<EmptyCell> {
@@ -32,22 +33,22 @@ pub(crate) mod initialize_empty_cells {
     }
 
     fn get_existing_values(grid: &Array2<NonEmptyCell>, guess: &EmptyCell) -> Vec<u8> {
-        let mut all_values = grid.row(guess.row).map(|&x| x.value).to_vec();
+        let mut all_values: Vec<u8> = grid.row(guess.row).map(|&x| x.value).to_vec();
 
         let mut columns_values: Vec<u8> = grid.column(guess.row).iter()
             .map(|&x| x.value)
-            .filter(|x| all_values.contains(x)).collect();
+            .filter(|x| !all_values.contains(x)).collect();
 
         all_values.append(&mut columns_values);
 
         let mut quadrant_values = grid.iter()
             .filter(|&x| x.quadrant == guess.quadrant)
             .map(|&x| x.value)
-            .filter(|x| all_values.contains(x)).collect();
+            .filter(|x| !all_values.contains(x)).collect();
 
         all_values.append(&mut quadrant_values);
 
-        all_values
+        return all_values.into_iter().filter(|&x| x != 0).collect();
     }
 
     #[cfg(test)]
@@ -57,23 +58,29 @@ pub(crate) mod initialize_empty_cells {
         use super::*;
 
         #[test]
-        fn get_existing_values_test() {
+        fn get_existing_values_test_cell_zero_zero() {
             let grid = generate_grid();
-            let mut guess = generate_empty_cell(0, 0, None);
 
-            let existing_values = get_existing_values(&grid, &guess);
-            eliminate_existing_values(existing_values, &mut guess);
-            assert_eq!(vec![9], guess.values);
+            let mut cell: EmptyCell = EmptyCell::create(0, 0);
+
+            let existing_values = get_existing_values(&grid, &cell);
+
+            assert_eq!(existing_values, [1, 2, 3, 4, 5, 6, 7, 8]);
+            eliminate_existing_values(existing_values, &mut cell);
+            assert_eq!(vec![9], cell.values);
         }
 
-        fn generate_empty_cell(row: usize, column: usize, values: Option<Vec<u8>>) -> EmptyCell {
-            let cell = EmptyCell {
-                row,
-                column,
-                quadrant: get_quadrant_position(row, column),
-                values: values.unwrap_or(vec![1, 2, 3, 4, 5, 6, 7, 8, 9]),
-            };
-            return cell;
+        #[test]
+        fn get_existing_values_test_cell_one_one() {
+            let grid = generate_grid();
+
+            let mut cell: EmptyCell = EmptyCell::create(1, 1);
+
+            let existing_values: Vec<u8> = get_existing_values(&grid, &cell);
+
+            assert!(iters_equal_anyorder(existing_values.clone().into_iter(), vec![1, 2, 8, 7].into_iter()));
+            eliminate_existing_values(existing_values, &mut cell);
+            assert!(iters_equal_anyorder(cell.values.into_iter(), vec![3, 4, 5, 6, 9].into_iter()));
         }
 
         fn generate_grid() -> Array2<NonEmptyCell> {
@@ -104,10 +111,10 @@ pub(crate) mod initialize_empty_cells {
 
             assert_eq!(guesses.len(), 65);
             assert!(guesses.contains(&EmptyCell::new(0, 0, [9].to_vec())));
-            assert!(guesses.contains(&EmptyCell::new(1, 1, [2, 3, 4, 5, 6, 7, 9].to_vec())));
-            assert!(guesses.contains(&EmptyCell::new(1, 2, [1, 3, 4, 5, 6, 7, 9].to_vec())));
-            assert!(guesses.contains(&EmptyCell::new(2, 1, [2, 3, 4, 5, 6, 8, 9].to_vec())));
-            assert!(guesses.contains(&EmptyCell::new(2, 2, [1, 3, 4, 5, 6, 8, 9].to_vec())));
+            assert!(guesses.contains(&EmptyCell::new(1, 1, [3, 4, 5, 6, 9].to_vec())));
+            assert!(guesses.contains(&EmptyCell::new(1, 2, [3, 4, 5, 6, 9].to_vec())));
+            assert!(guesses.contains(&EmptyCell::new(2, 1, [3, 4, 5, 6, 9].to_vec())));
+            assert!(guesses.contains(&EmptyCell::new(2, 2, [3, 4, 5, 6, 9].to_vec())));
             assert!(guesses.contains(&EmptyCell::new(8, 8, [2, 3, 4, 5, 6, 7, 9].to_vec())));
         }
     }
