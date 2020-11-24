@@ -1,33 +1,25 @@
 pub mod model {
     use std::collections::HashMap;
-
     use logs::debug;
     use ndarray::Array2;
 
     use crate::validator::validator::validate_grid;
+    use crate::utilities::utilities::get_quadrant_position;
 
-    // ```it describes a cell with a known value
-    #[derive(Debug, Copy, Clone, Default)]
+    // ```it describes a cell position and its value
+    #[derive(Debug, Default, Clone)]
     pub struct NonEmptyCell {
         pub value: u8,
         pub quadrant: usize,
     }
 
-    //```it describes an empty cell
-    #[derive(Debug, Clone, Default)]
+    //```it describes an empty cell position and the values that can be in that cell.
+    #[derive(Debug, Default, Clone)]
     pub struct EmptyCell {
         pub row: usize,
         pub column: usize,
         pub quadrant: usize,
         pub values: Vec<u8>,
-    }
-
-    //
-    #[derive(Clone, Copy, Default)]
-    pub struct GuessCell {
-        pub row: usize,
-        pub column: usize,
-        pub value: u8,
     }
 
     pub trait GridFunctions {
@@ -42,27 +34,6 @@ pub mod model {
         fn new(row: usize, column: usize, values:Vec<u8>) -> Self;
     }
 
-    pub trait AllowedValuesFunctions {
-        //```eliminates guessed_value as possible value from all other cells.
-        fn eliminate_guessed_value_from_other_cells(&self, guessed_value: &GuessCell) -> Vec<EmptyCell>;
-
-        //```returns all cells that have only one possible value after selecting guessed_value
-        fn elimination_process(&self, guessed_value: &GuessCell) -> Vec<GuessCell>;
-
-        // ```returns an hashmap with keys values and entries an array containing all cells which allows for that value
-        //fn returns_hashmap_with_counts(&self) -> HashMap<u8, Vec<GuessedValue>>;
-    }
-
-    pub trait GuessedValuesFunctions {
-        //sets all guessed values in the grid.
-        fn set_guessed_values_in_grid(&self, grid: &mut Array2<NonEmptyCell>);
-    }
-
-    pub trait GuessedValueFunctions {
-        //sets a guessed value in the grid.
-        fn set_guessed_value_in_grid(&self, grid: &mut Array2<NonEmptyCell>);
-    }
-
     impl GridFunctions for Array2<NonEmptyCell> {
         fn add_quadrants_information(&mut self) {
             for i in 0..9 {
@@ -74,17 +45,53 @@ pub mod model {
         }
 
         fn is_complete(&self) -> bool {
-            return self.iter().filter(|&&x| x.value == 0).count() == 0;
+            return self.iter().filter(|&x| x.value == 0).count() == 0;
         }
     }
 
-    pub fn get_quadrant_position(i: usize, j: usize) -> usize {
-        return 3 * (i / 3) + j / 3;
+    impl EmptyCellFunctions for EmptyCell {
+        fn create(row: usize, column: usize) -> Self {
+            return EmptyCell {
+                row,
+                column,
+                quadrant: get_quadrant_position(row, column),
+                values: vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
+            };
+        }
+        fn new(row: usize, column: usize, values:Vec<u8>) -> Self {
+            return EmptyCell {
+                row,
+                column,
+                quadrant: get_quadrant_position(row, column),
+                values
+            };
+        }
     }
 
     //todo move all this stuff. Too much logic this is not a model.
     // ```sets in the grid all Allowed values with only one possible value
-    impl AllowedValuesFunctions for Vec<EmptyCell> {
+
+    /*pub trait AllowedValuesFunctions {
+    //```eliminates guessed_value as possible value from all other cells.
+    fn eliminate_guessed_value_from_other_cells(&self, guessed_value: &GuessCell) -> Vec<EmptyCell>;
+
+    //```returns all cells that have only one possible value after selecting guessed_value
+    fn elimination_process(&self, guessed_value: &GuessCell) -> Vec<GuessCell>;
+
+    // ```returns an hashmap with keys values and entries an array containing all cells which allows for that value
+    //fn returns_hashmap_with_counts(&self) -> HashMap<u8, Vec<GuessedValue>>;
+}*/
+
+    /*pub trait GuessedValuesFunctions {
+        //sets all guessed values in the grid.
+        fn set_guessed_values_in_grid(&self, grid: &mut Array2<NonEmptyCell>);
+    }
+
+    pub trait GuessedValueFunctions {
+        //sets a guessed value in the grid.
+        fn set_guessed_value_in_grid(&self, grid: &mut Array2<NonEmptyCell>);
+    }*/
+    /*impl AllowedValuesFunctions for Vec<EmptyCell> {
         fn eliminate_guessed_value_from_other_cells(&self, guessed_value: &GuessCell) -> Vec<EmptyCell> {
             let mut new_guesses = self.clone();
             new_guesses.iter_mut().for_each(|x|
@@ -134,9 +141,9 @@ pub mod model {
             });
             return counter;
         }*/
-    }
+    }*/
 
-    impl GuessedValuesFunctions for Vec<GuessCell> {
+    /*impl GuessedValuesFunctions for Vec<GuessCell> {
         fn set_guessed_values_in_grid(&self, mut grid: &mut Array2<NonEmptyCell>) {
             self.iter().for_each(|guessed_value| guessed_value.set_guessed_value_in_grid(&mut grid));
         }
@@ -149,26 +156,8 @@ pub mod model {
             if grid[[i, j]].value != 0 { panic!("Something is seriously wrong") }
             grid[[i, j]].value = self.value;
         }
-    }
+    }*/
 
-    impl EmptyCellFunctions for EmptyCell {
-        fn create(row: usize, column: usize) -> Self {
-            return EmptyCell {
-                row,
-                column,
-                quadrant: get_quadrant_position(row, column),
-                values: vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
-            };
-        }
-        fn new(row: usize, column: usize, values:Vec<u8>) -> Self {
-            return EmptyCell {
-                row,
-                column,
-                quadrant: get_quadrant_position(row, column),
-                values
-            };
-        }
-    }
 
     #[cfg(test)]
     mod tests {
@@ -190,7 +179,7 @@ pub mod model {
             assert_eq!(get_quadrant_position(4, 7), 5);
         }
 
-        #[test]
+        /*#[test]
         fn set_guessed_values_in_grid_test() {
             let mut guessed_values: Vec<GuessCell> = Vec::new();
             guessed_values.push(GuessCell {
@@ -231,7 +220,7 @@ pub mod model {
         }
 
         #[test]
-        fn elimination_process_test() {}
+        fn elimination_process_test() {}*/
     }
 }
 

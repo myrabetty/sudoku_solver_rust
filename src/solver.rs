@@ -1,27 +1,32 @@
 pub mod solver {
     use ndarray::Array2;
-    use crate::model::model::GridFunctions;
+
     use crate::initialize_empty_cells::initialize_empty_cells::set_allowed_values;
     use crate::model::model::{EmptyCell, NonEmptyCell};
+    use crate::model::model::GridFunctions;
     use crate::solver_helper::solver_helper::select_best_guess;
 
     pub fn solve(initial_grid: &Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
         let mut current_grid: Array2<NonEmptyCell> = initial_grid.clone();
-        let mut complement : Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>)> = Vec::new();
+        let mut complement: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>)> = Vec::new();
 
 
         while !current_grid.is_complete() {
             let guesses = set_allowed_values(&current_grid);
-            /*if !guesses.is_consistent() {
-                (current_grid, guesses) = complement.pop().unwrap();
-                current_grid = com.grid;
-            }*/
+            if !is_a_guess_empty(&guesses) {
+                // (current_grid, guesses) = complement.pop().unwrap();
+                //  current_grid = com.grid;
+            }
 
             // whatever happens before I arrive here with a set of allowed values and a grid.
             // value = find_new_guess(current_grid, guesses);
         }
 
         return current_grid;
+    }
+
+    fn is_a_guess_empty(guesses: &Vec<EmptyCell>) -> bool {
+        return guesses.iter().any(|x| x.values.is_empty());
     }
 }
 

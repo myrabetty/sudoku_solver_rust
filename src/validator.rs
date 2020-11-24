@@ -1,3 +1,6 @@
+//``` contains a function to validate the grid checking no duplicate values are present in quadrants,
+// rows and columns.
+
 pub(crate) mod validator {
     use ndarray::Array2;
 
@@ -7,9 +10,19 @@ pub(crate) mod validator {
     pub fn validate_grid(grid: &Array2<NonEmptyCell>) -> Result<(), String> {
         for value in 1..10 {
             for j in 0..9 {
-                validate_row(grid, value, j).unwrap();
-                validate_column(grid, value, j).unwrap();
-                validate_quadrant(grid, value, j).unwrap();
+                let result_row = validate_row(grid, value, j);
+                if result_row.is_err() {
+                    return result_row;
+                }
+                let result_column = validate_column(grid, value, j);
+                if result_column.is_err(){
+                    return  result_column;
+                }
+                //
+                let result_quadrant =  validate_quadrant(grid, value, j);
+                if result_quadrant.is_err(){
+                    return  result_quadrant;
+                }
             }
         }
         Ok(())
@@ -39,15 +52,6 @@ pub(crate) mod validator {
         return Ok(());
     }
 
-    // validates the consistency of the values allowed for the empty cells by asserting that
-    // none is an empty set.
-    pub fn validate_allowed_values(allowed_values: Vec<EmptyCell>) -> Result<(), ()> {
-        if allowed_values.iter().map(|x| x.values.is_empty()).count() > 0 {
-            return Err(());
-        }
-        Ok(())
-    }
-
     trait GetValues {
         fn get_values(&self) -> Vec<u8>;
     }
@@ -58,7 +62,6 @@ pub(crate) mod validator {
         }
     }
 
-
     #[cfg(test)]
     mod tests {
         use crate::model::model::GridFunctions;
@@ -66,25 +69,32 @@ pub(crate) mod validator {
         use super::*;
 
         #[test]
-        fn validate_rows() {
+        fn validate_row_test() {
             let grid = generate_grid();
             validate_row(&grid, 1, 0).expect_err("error");
             validate_row(&grid, 2, 0).expect("no error");
         }
 
         #[test]
-        fn validate_columns() {
+        fn validate_column_test() {
             let grid = generate_grid();
             validate_column(&grid, 9, 0).expect_err("error");
             validate_column(&grid, 2, 0).expect("no error");
         }
 
         #[test]
-        fn validate_quadrants() {
+        fn validate_quadrant_test() {
             let grid = generate_grid();
             validate_quadrant(&grid, 9, 0).expect_err("error");
             validate_quadrant(&grid, 1, 0).expect_err("error");
             validate_quadrant(&grid, 3, 0).expect("no error");
+        }
+
+        #[test]
+        fn validate_grid_test(){
+            let grid = generate_grid();
+            validate_grid(&grid).expect_err("error result");
+
         }
 
         fn generate_grid() -> Array2<NonEmptyCell> {

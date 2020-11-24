@@ -2,7 +2,7 @@ pub(crate) mod initialize_empty_cells {
     use ndarray::Array2;
 
     use crate::model::model::{EmptyCell, EmptyCellFunctions, GridFunctions, NonEmptyCell};
-    use crate::utilities::utilities::iters_equal_anyorder;
+    use crate::utilities::utilities::iters_equal_any_order;
 
     // ```given a grid returns for each empty cell the possible values.
     pub fn set_allowed_values(grid: &Array2<NonEmptyCell>) -> Vec<EmptyCell> {
@@ -33,17 +33,17 @@ pub(crate) mod initialize_empty_cells {
     }
 
     fn get_existing_values(grid: &Array2<NonEmptyCell>, guess: &EmptyCell) -> Vec<u8> {
-        let mut all_values: Vec<u8> = grid.row(guess.row).map(|&x| x.value).to_vec();
+        let mut all_values: Vec<u8> = grid.row(guess.row).map(|x| x.value).to_vec();
 
         let mut columns_values: Vec<u8> = grid.column(guess.row).iter()
-            .map(|&x| x.value)
+            .map(|x| x.value)
             .filter(|x| !all_values.contains(x)).collect();
 
         all_values.append(&mut columns_values);
 
         let mut quadrant_values = grid.iter()
             .filter(|&x| x.quadrant == guess.quadrant)
-            .map(|&x| x.value)
+            .map(|x| x.value)
             .filter(|x| !all_values.contains(x)).collect();
 
         all_values.append(&mut quadrant_values);
@@ -53,7 +53,7 @@ pub(crate) mod initialize_empty_cells {
 
     #[cfg(test)]
     mod tests {
-        use crate::model::model::{get_quadrant_position, GuessCell};
+        use crate::utilities::utilities::{get_quadrant_position};
 
         use super::*;
 
@@ -78,9 +78,9 @@ pub(crate) mod initialize_empty_cells {
 
             let existing_values: Vec<u8> = get_existing_values(&grid, &cell);
 
-            assert!(iters_equal_anyorder(existing_values.clone().into_iter(), vec![1, 2, 8, 7].into_iter()));
+            assert!(iters_equal_any_order(existing_values.clone().into_iter(), vec![1, 2, 8, 7].into_iter()));
             eliminate_existing_values(existing_values, &mut cell);
-            assert!(iters_equal_anyorder(cell.values.into_iter(), vec![3, 4, 5, 6, 9].into_iter()));
+            assert!(iters_equal_any_order(cell.values.into_iter(), vec![3, 4, 5, 6, 9].into_iter()));
         }
 
         fn generate_grid() -> Array2<NonEmptyCell> {
