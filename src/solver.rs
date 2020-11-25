@@ -1,32 +1,76 @@
 pub mod solver {
+    use logs::{debug, info};
     use ndarray::Array2;
 
     use crate::initialize_empty_cells::initialize_empty_cells::set_allowed_values;
-    use crate::model::model::{EmptyCell, NonEmptyCell};
+    use crate::model::model::{EmptyCell, NonEmptyCell, Guess};
     use crate::model::model::GridFunctions;
-    use crate::solver_helper::solver_helper::select_best_guess;
+    use crate::solver_helper::solver_helper::find_new_guess;
+    use std::borrow::Borrow;
 
     pub fn solve(initial_grid: &Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
         let mut current_grid: Array2<NonEmptyCell> = initial_grid.clone();
-        let mut complement: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>)> = Vec::new();
+        let mut complements: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>)> = Vec::new();
 
 
         while !current_grid.is_complete() {
-            let guesses = set_allowed_values(&current_grid);
-            if !is_a_guess_empty(&guesses) {
-                // (current_grid, guesses) = complement.pop().unwrap();
-                //  current_grid = com.grid;
+            let mut guesses = set_allowed_values(&current_grid);
+            if is_a_guess_empty(&guesses) {
+                let complement = complements.pop().unwrap();
+                guesses = complement.1;
+                current_grid = complement.0;
             }
 
             // whatever happens before I arrive here with a set of allowed values and a grid.
-            // value = find_new_guess(current_grid, guesses);
+            let result = find_new_guess(&guesses);
+            if result.is_ok() {
+                let new_value = result.unwrap();
+                remove_current_choice(&mut guesses, &new_value);
+                complements.push((current_grid.clone(), guesses));
+                info!("value is {:?}", new_value);
+                current_grid[[new_value.row, new_value.column]].value = new_value.value;
+            } else {
+                panic!("we cannot find a valid guess this should not happen!")
+            }
         }
 
+        info!("Grid is complete");
         return current_grid;
     }
 
     fn is_a_guess_empty(guesses: &Vec<EmptyCell>) -> bool {
-        return guesses.iter().any(|x| x.values.is_empty());
+        let hasEmptyGuess = guesses.iter().any(|x| x.values.is_empty());
+        debug!("hasEmptyGuess is {:?}", hasEmptyGuess);
+        return hasEmptyGuess;
+    }
+
+    // ``` removes the chosen value from the array of possible values
+    fn remove_current_choice(empty_cells: &mut Vec<EmptyCell>, choice: &Guess) {
+        let index = empty_cells.iter()
+            .position(|x| x.row == choice.row && x.column == choice.column).unwrap();
+
+        let values = empty_cells[index]
+            .values.clone().into_iter()
+            .filter(|&x| x != choice.value).collect();
+
+        empty_cells[index].values = values;
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use crate::model::model::EmptyCellFunctions;
+
+        use super::*;
+
+        #[test]
+        fn is_a_guess_empty_test() {
+            let mut emptyCell = EmptyCell::create(0, 0);
+            let mut guesses = vec![emptyCell];
+            assert!(!is_a_guess_empty(&guesses));
+
+            guesses[0].values = vec![];
+            assert!(is_a_guess_empty(&guesses));
+        }
     }
 }
 

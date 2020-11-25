@@ -1,10 +1,11 @@
 pub mod model {
     use std::collections::HashMap;
+
     use logs::debug;
     use ndarray::Array2;
 
-    use crate::validator::validator::validate_grid;
     use crate::utilities::utilities::get_quadrant_position;
+    use crate::validator::validator::validate_grid;
 
     // ```it describes a cell position and its value
     #[derive(Debug, Default, Clone)]
@@ -22,6 +23,14 @@ pub mod model {
         pub values: Vec<u8>,
     }
 
+    #[derive(Debug, Default, Clone)]
+    pub struct Guess {
+        pub row: usize,
+        pub column: usize,
+        pub value: u8,
+    }
+
+
     pub trait GridFunctions {
         // ``` add quadrant information to a grid
         fn add_quadrants_information(&mut self);
@@ -31,7 +40,7 @@ pub mod model {
 
     pub trait EmptyCellFunctions {
         fn create(row: usize, column: usize) -> Self;
-        fn new(row: usize, column: usize, values:Vec<u8>) -> Self;
+        fn new(row: usize, column: usize, values: Vec<u8>) -> Self;
     }
 
     impl GridFunctions for Array2<NonEmptyCell> {
@@ -58,12 +67,12 @@ pub mod model {
                 values: vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
             };
         }
-        fn new(row: usize, column: usize, values:Vec<u8>) -> Self {
+        fn new(row: usize, column: usize, values: Vec<u8>) -> Self {
             return EmptyCell {
                 row,
                 column,
                 quadrant: get_quadrant_position(row, column),
-                values
+                values,
             };
         }
     }
@@ -163,64 +172,48 @@ pub mod model {
     mod tests {
         use super::*;
 
-        #[test]
-        fn get_quadrant_position_test() {
-            //``` maps row 0, columns 0 into 0
-            assert_eq!(get_quadrant_position(0, 0), 0);
-            //``` maps row 8, columns 0 into 6
-            assert_eq!(get_quadrant_position(8, 0), 6);
-            //``` maps row 8, columns 8 into 8
-            assert_eq!(get_quadrant_position(8, 8), 8);
-            //``` maps row 0, columns 8 into 2
-            assert_eq!(get_quadrant_position(0, 8), 2);
-            //``` maps row 4, columns 2 into 3
-            assert_eq!(get_quadrant_position(4, 2), 3);
-            //``` maps row 4, columns 7 into 4
-            assert_eq!(get_quadrant_position(4, 7), 5);
-        }
-
         /*#[test]
-        fn set_guessed_values_in_grid_test() {
-            let mut guessed_values: Vec<GuessCell> = Vec::new();
-            guessed_values.push(GuessCell {
-                row: 0,
-                column: 0,
-                value: 5,
-            });
+                        fn set_guessed_values_in_grid_test() {
+                            let mut guessed_values: Vec<GuessCell> = Vec::new();
+                            guessed_values.push(GuessCell {
+                                row: 0,
+                                column: 0,
+                                value: 5,
+                            });
 
-            guessed_values.push(GuessCell {
-                row: 5,
-                column: 2,
-                value: 8,
-            });
+                            guessed_values.push(GuessCell {
+                                row: 5,
+                                column: 2,
+                                value: 8,
+                            });
 
-            let mut grid: Array2<NonEmptyCell> = Array2::default((9, 9));
-            grid.add_quadrants_information();
-            guessed_values.set_guessed_values_in_grid(&mut grid);
+                            let mut grid: Array2<NonEmptyCell> = Array2::default((9, 9));
+                            grid.add_quadrants_information();
+                            guessed_values.set_guessed_values_in_grid(&mut grid);
 
-            assert_eq!(grid[[0, 0]].value, 5);
-            assert_eq!(grid[[5, 2]].value, 8);
-        }
+                            assert_eq!(grid[[0, 0]].value, 5);
+                            assert_eq!(grid[[5, 2]].value, 8);
+                        }
 
-        #[test]
-        fn eliminate_guessed_value_from_other_cells() {
-            let mut guessed_values: Vec<GuessCell> = Vec::new();
-            guessed_values.push(GuessCell {
-                row: 5,
-                column: 2,
-                value: 8,
-            });
-            let mut allowed_values: Vec<EmptyCell> = Vec::new();
-            allowed_values.push(EmptyCell::create(5, 1));
-            allowed_values.push(EmptyCell::create(1, 2));
-            allowed_values.push(EmptyCell::create(8, 8));
-            allowed_values.push(EmptyCell::create(4, 1));
+                        #[test]
+                        fn eliminate_guessed_value_from_other_cells() {
+                            let mut guessed_values: Vec<GuessCell> = Vec::new();
+                            guessed_values.push(GuessCell {
+                                row: 5,
+                                column: 2,
+                                value: 8,
+                            });
+                            let mut allowed_values: Vec<EmptyCell> = Vec::new();
+                            allowed_values.push(EmptyCell::create(5, 1));
+                            allowed_values.push(EmptyCell::create(1, 2));
+                            allowed_values.push(EmptyCell::create(8, 8));
+                            allowed_values.push(EmptyCell::create(4, 1));
 
-            //assert_eq!()
-        }
+                            //assert_eq!()
+                        }
 
-        #[test]
-        fn elimination_process_test() {}*/
+                        #[test]
+                        fn elimination_process_test() {}*/
     }
 }
 

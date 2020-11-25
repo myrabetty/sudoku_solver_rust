@@ -14,11 +14,12 @@ pub(crate) mod validator {
                 if result_row.is_err() {
                     return result_row;
                 }
+
                 let result_column = validate_column(grid, value, j);
                 if result_column.is_err(){
                     return  result_column;
                 }
-                //
+
                 let result_quadrant =  validate_quadrant(grid, value, j);
                 if result_quadrant.is_err(){
                     return  result_quadrant;
@@ -94,7 +95,6 @@ pub(crate) mod validator {
         fn validate_grid_test(){
             let grid = generate_grid();
             validate_grid(&grid).expect_err("error result");
-
         }
 
         fn generate_grid() -> Array2<NonEmptyCell> {

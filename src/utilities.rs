@@ -1,9 +1,10 @@
 pub mod utilities {
     use std::collections::{hash_map::Entry, HashMap};
     use std::hash::Hash;
-    use logs::debug;
-    use crate::model::model::EmptyCell;
 
+    use logs::debug;
+
+    use crate::model::model::EmptyCell;
 
     //``` returns the quadrant value given the row and the column.
     pub fn get_quadrant_position(i: usize, j: usize) -> usize {
@@ -32,6 +33,27 @@ pub mod utilities {
                 return iters_equal_any_order(self.values.clone().into_iter(), other.values.clone().into_iter());
             }
             return false;
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn get_quadrant_position_test() {
+            //``` maps row 0, columns 0 into 0
+            assert_eq!(get_quadrant_position(0, 0), 0);
+            //``` maps row 8, columns 0 into 6
+            assert_eq!(get_quadrant_position(8, 0), 6);
+            //``` maps row 8, columns 8 into 8
+            assert_eq!(get_quadrant_position(8, 8), 8);
+            //``` maps row 0, columns 8 into 2
+            assert_eq!(get_quadrant_position(0, 8), 2);
+            //``` maps row 4, columns 2 into 3
+            assert_eq!(get_quadrant_position(4, 2), 3);
+            //``` maps row 4, columns 7 into 4
+            assert_eq!(get_quadrant_position(4, 7), 5);
         }
     }
 }
