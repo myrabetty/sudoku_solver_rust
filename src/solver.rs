@@ -39,12 +39,12 @@ pub mod solver {
 
     fn is_a_guess_empty(guesses: &Vec<EmptyCell>) -> bool {
         let result = guesses.iter().position(|x| x.values.is_empty());
-        match result {
+        return match result {
             Some(index) => {
                 warn!("solution is empty set for {:?}", guesses[index]);
-                return true;
+                true
             }
-            None => return false
+            None => false
         }
     }
 
