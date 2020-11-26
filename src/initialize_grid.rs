@@ -7,7 +7,7 @@ pub(crate) mod initialize_grid {
 
     use crate::model::model::{GridFunctions, NonEmptyCell};
 
-    pub fn write_output_file(grid: Array2<NonEmptyCell>, filename: &str) {
+    pub fn write_output_file(grid: &Array2<NonEmptyCell>, filename: &str) {
         let mut file = File::create(filename).expect("file cannot be created");
         for i in 0..9 {
             let mut line = String::new();

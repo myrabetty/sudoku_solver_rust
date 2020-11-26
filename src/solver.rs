@@ -1,24 +1,23 @@
 pub mod solver {
-    use logs::{debug, info};
+    use std::borrow::Borrow;
+
+    use logs::{debug, info, warn};
     use ndarray::Array2;
 
     use crate::initialize_empty_cells::initialize_empty_cells::set_allowed_values;
-    use crate::model::model::{EmptyCell, NonEmptyCell, Guess};
+    use crate::model::model::{EmptyCell, Guess, NonEmptyCell};
     use crate::model::model::GridFunctions;
     use crate::solver_helper::solver_helper::find_new_guess;
-    use std::borrow::Borrow;
 
-    pub fn solve(initial_grid: &Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
-        let mut current_grid: Array2<NonEmptyCell> = initial_grid.clone();
+    pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
         let mut complements: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>)> = Vec::new();
-
-
-        while !current_grid.is_complete() {
-            let mut guesses = set_allowed_values(&current_grid);
+        while !grid.is_complete() {
+            let mut guesses = set_allowed_values(&grid);
             if is_a_guess_empty(&guesses) {
+                warn!("taking complement after ruling solution as invalid");
                 let complement = complements.pop().unwrap();
                 guesses = complement.1;
-                current_grid = complement.0;
+                grid = complement.0;
             }
 
             // whatever happens before I arrive here with a set of allowed values and a grid.
@@ -26,22 +25,27 @@ pub mod solver {
             if result.is_ok() {
                 let new_value = result.unwrap();
                 remove_current_choice(&mut guesses, &new_value);
-                complements.push((current_grid.clone(), guesses));
+                complements.push((grid.clone(), guesses));
                 info!("value is {:?}", new_value);
-                current_grid[[new_value.row, new_value.column]].value = new_value.value;
+                grid[[new_value.row, new_value.column]].value = new_value.value;
             } else {
                 panic!("we cannot find a valid guess this should not happen!")
             }
         }
 
         info!("Grid is complete");
-        return current_grid;
+        return grid;
     }
 
     fn is_a_guess_empty(guesses: &Vec<EmptyCell>) -> bool {
-        let hasEmptyGuess = guesses.iter().any(|x| x.values.is_empty());
-        debug!("hasEmptyGuess is {:?}", hasEmptyGuess);
-        return hasEmptyGuess;
+        let result = guesses.iter().position(|x| x.values.is_empty());
+        match result {
+            Some(index) => {
+                warn!("solution is empty set for {:?}", guesses[index]);
+                return true;
+            }
+            None => return false
+        }
     }
 
     // ``` removes the chosen value from the array of possible values

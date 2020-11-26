@@ -9,22 +9,29 @@ pub(crate) mod solver_helper {
 // returns the cell with a value that is to be added in the grid.
     pub(crate) fn find_new_guess(allowed_values: &Vec<EmptyCell>) -> Result<Guess, ()> {
 
-        // try to find first an unique value
+        //find first empty cell with one only option
         match returns_first_unique_guess(&allowed_values) {
             Some(guessed_value) => return Ok(guessed_value),
             None => {}
         }
 
-        //let counter = guesses.returns_hashmap_with_counts();
-        //let min = counter.iter().min_by(|&&x, &&y| x.1.len() < y.1.len()).unwrap();
-
-        //```trivial case of a number that is present only in one place.
-        /*if min.1.len() == 1 {
-        return Ok(*min.1.get(0).unwrap());
-    }*/
-        // ```case of a number present in two places
-        //if
-        //return GuessedValue::default();
+        //find if there is a value that appears in one empty cell only in a row
+        for value in 1..10_u8 {
+            for index in 0..9_usize {
+                match unique_value(&allowed_values, &value, index, (|x: &EmptyCell, value: &u8, index: usize| (*x).row == index && (*x).values.contains(&6))) {
+                    Some(guessed_value) => return Ok(guessed_value),
+                    None => {}
+                }
+                /*match unique_value(&allowed_values, value,  index, (|x:EmptyCell, value:u8, index:usize| x.column == index && x.values.contains(*value))) {
+                    Some(guessed_value) => return Ok(guessed_value),
+                    None => {}
+                }
+                match unique_value(&allowed_values, value,  index, (|x:EmptyCell, value:u8, index:usize| x.quadrant == index && x.values.contains(*value))) {
+                    Some(guessed_value) => return Ok(guessed_value),
+                    None => {}
+                }*/
+            }
+        }
         return Err(());
     }
 
@@ -45,5 +52,25 @@ pub(crate) mod solver_helper {
             }
             None => None
         };
+    }
+
+    fn unique_value(guesses: &Vec<EmptyCell>, value: &u8, index: usize, filter: fn(&EmptyCell, &u8, usize) -> bool) -> Option<Guess> {
+        let number_of_appearances = guesses.iter()
+            .filter(|&x| filter(&x, &value, index))
+            .count();
+        if number_of_appearances == 1 {
+            let result = guesses.iter()
+                .filter(|&x| x.values.contains(value))
+                .map(
+                    |x| Guess {
+                        row: x.row,
+                        column: x.column,
+                        value: *value,
+                    }
+                ).nth(1);
+
+            return result;
+        }
+        return None;
     }
 }

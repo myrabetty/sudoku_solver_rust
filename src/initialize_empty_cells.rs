@@ -19,13 +19,8 @@ pub(crate) mod initialize_empty_cells {
         guesses.iter_mut().for_each(|mut guess| {
             let existing_values = get_existing_values(grid, guess);
             eliminate_existing_values(existing_values, &mut guess);
-            //if guess.values.is_empty() { errors.push(format!("Guess for empty cell i={}, j ={} is null", guess.row, guess.column)) }
         });
         return guesses;
-        /* if errors.is_empty() {
-            return Ok(guesses);
-        }
-        return Err(errors); */
     }
 
     fn eliminate_existing_values(existing_values: Vec<u8>, guess: &mut EmptyCell) {
@@ -35,7 +30,7 @@ pub(crate) mod initialize_empty_cells {
     fn get_existing_values(grid: &Array2<NonEmptyCell>, guess: &EmptyCell) -> Vec<u8> {
         let mut all_values: Vec<u8> = grid.row(guess.row).map(|x| x.value).to_vec();
 
-        let mut columns_values: Vec<u8> = grid.column(guess.row).iter()
+        let mut columns_values: Vec<u8> = grid.column(guess.column).iter()
             .map(|x| x.value)
             .filter(|x| !all_values.contains(x)).collect();
 
