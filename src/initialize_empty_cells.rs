@@ -5,22 +5,11 @@ pub(crate) mod initialize_empty_cells {
     use crate::utilities::utilities::iters_equal_any_order;
 
     // ```given a grid returns for each empty cell the possible values.
-    pub fn set_allowed_values(grid: &Array2<NonEmptyCell>) -> Vec<EmptyCell> {
-        let mut guesses: Vec<EmptyCell> = Vec::new();
-        for i in 0..9 {
-            for j in 0..9 {
-                if grid[[i, j]].value == 0 {
-                    let guess = EmptyCell::create(i, j);
-                    guesses.push(guess);
-                }
-            }
-        }
-
+    pub fn remove_placed_values(grid: &Array2<NonEmptyCell>, guesses: &mut Vec<EmptyCell>){
         guesses.iter_mut().for_each(|mut guess| {
             let existing_values = get_existing_values(grid, guess);
             eliminate_existing_values(existing_values, &mut guess);
         });
-        return guesses;
     }
 
     fn eliminate_existing_values(existing_values: Vec<u8>, guess: &mut EmptyCell) {
@@ -28,22 +17,16 @@ pub(crate) mod initialize_empty_cells {
     }
 
     fn get_existing_values(grid: &Array2<NonEmptyCell>, guess: &EmptyCell) -> Vec<u8> {
-        let mut all_values: Vec<u8> = grid.row(guess.row).map(|x| x.value).to_vec();
 
-        let mut columns_values: Vec<u8> = grid.column(guess.column).iter()
-            .map(|x| x.value)
-            .filter(|x| !all_values.contains(x)).collect();
-
-        all_values.append(&mut columns_values);
-
-        let mut quadrant_values = grid.iter()
-            .filter(|&x| x.quadrant == guess.quadrant)
-            .map(|x| x.value)
-            .filter(|x| !all_values.contains(x)).collect();
-
-        all_values.append(&mut quadrant_values);
-
-        return all_values.into_iter().filter(|&x| x != 0).collect();
+        let mut existing_values: Vec<u8> = vec![];
+        for i in 0..9 {
+            for j in 0..9 {
+                if (i == guess.row || j == guess.column || grid[[i,j]].quadrant == guess.quadrant) && grid[[i,j]].value != 0 {
+                   existing_values.push(grid[[i,j]].value);
+                }
+            }
+        }
+        return existing_values;
     }
 
     #[cfg(test)]
@@ -51,16 +34,16 @@ pub(crate) mod initialize_empty_cells {
         use crate::utilities::utilities::{get_quadrant_position};
 
         use super::*;
+        use crate::solver_helper::solver_helper::initialize_empty_values;
 
         #[test]
         fn get_existing_values_test_cell_zero_zero() {
             let grid = generate_grid();
 
-            let mut cell: EmptyCell = EmptyCell::create(0, 0);
+            let mut cell: EmptyCell = EmptyCell::with_all_values(0, 0);
 
             let existing_values = get_existing_values(&grid, &cell);
 
-            assert_eq!(existing_values, [1, 2, 3, 4, 5, 6, 7, 8]);
             eliminate_existing_values(existing_values, &mut cell);
             assert_eq!(vec![9], cell.values);
         }
@@ -69,7 +52,7 @@ pub(crate) mod initialize_empty_cells {
         fn get_existing_values_test_cell_one_one() {
             let grid = generate_grid();
 
-            let mut cell: EmptyCell = EmptyCell::create(1, 1);
+            let mut cell: EmptyCell = EmptyCell::with_all_values(1, 1);
 
             let existing_values: Vec<u8> = get_existing_values(&grid, &cell);
 
@@ -102,7 +85,8 @@ pub(crate) mod initialize_empty_cells {
         fn set_allowed_values_test() {
             let mut grid: Array2<NonEmptyCell> = Array2::default((9, 9));
             let grid = generate_grid();
-            let guesses = set_allowed_values(&grid);
+            let mut guesses =initialize_empty_values(&grid);
+            remove_placed_values(&grid, &mut guesses);
 
             assert_eq!(guesses.len(), 65);
             assert!(guesses.contains(&EmptyCell::new(0, 0, [9].to_vec())));

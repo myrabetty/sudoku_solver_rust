@@ -23,6 +23,14 @@ pub mod model {
         pub values: Vec<u8>,
     }
 
+    impl EmptyCell {
+        pub(crate) fn eliminate(&mut self, value: u8) {
+            if let Some(index) = self.values.iter().position(|&x| x == value) {
+                self.values.remove(index);
+            }
+        }
+    }
+
     #[derive(Debug, Default, Clone)]
     pub struct Guess {
         pub row: usize,
@@ -39,7 +47,7 @@ pub mod model {
     }
 
     pub trait EmptyCellFunctions {
-        fn create(row: usize, column: usize) -> Self;
+        fn with_all_values(row: usize, column: usize) -> Self;
         fn new(row: usize, column: usize, values: Vec<u8>) -> Self;
     }
 
@@ -59,7 +67,7 @@ pub mod model {
     }
 
     impl EmptyCellFunctions for EmptyCell {
-        fn create(row: usize, column: usize) -> Self {
+        fn with_all_values(row: usize, column: usize) -> Self {
             return EmptyCell {
                 row,
                 column,
