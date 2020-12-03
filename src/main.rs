@@ -12,7 +12,7 @@ mod utilities;
 
 fn main(){
 
-    let input_data = read_input_file("/Users/esemboloni/source/pocs/sudoku_solver/src/example_3.txt");
+    let input_data = read_input_file("/Users/esemboloni/source/pocs/sudoku_solver/src/example_4.txt");
     let grid = generate_grid(input_data);
     validate_grid(&grid);
     let complete_grid = solve(grid);

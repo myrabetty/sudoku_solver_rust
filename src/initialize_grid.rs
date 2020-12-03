@@ -64,11 +64,9 @@ pub(crate) mod initialize_grid {
     fn assign_value_and_increase_index(grid: &mut Array2<NonEmptyCell>, i: &mut usize, j: &mut usize, a: char) -> Result<usize, &'static str> {
         return if a >= '0' && a <= '9' {
             let b = a as u8 - '0' as u8;
-            println!("character is a number {:?}", b);
             grid[[*i, *j]].value = b;
             Ok(*j + 1)
         } else if a == ' ' || a == '\n' || a == ',' {
-            println!("field separator found");
             Ok(*j)
         } else {
             Err("character not allowed")
