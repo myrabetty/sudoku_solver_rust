@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use logs::{debug, info, warn};
 use ndarray::Array2;
 use crate::core::model::{NonEmptyCell, EmptyCell, Guess, GridFunctions};

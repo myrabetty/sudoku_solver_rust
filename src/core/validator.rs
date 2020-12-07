@@ -2,7 +2,7 @@
 // rows and columns.
 use ndarray::Array2;
 
-use crate::core::model::{EmptyCell, NonEmptyCell};
+use crate::core::model::{EmptyCell, NonEmptyCell, GridFunctions};
 
 //validate there are no duplications with the values set in the grid.
 pub fn validate_grid(grid: &Array2<NonEmptyCell>) -> Result<(), String> {
@@ -63,10 +63,8 @@ impl GetValues for Vec<NonEmptyCell> {
 
 #[cfg(test)]
 mod tests {
-    use crate::model::model::GridFunctions;
-
     use super::*;
-    use crate::core::model::NonEmptyCell;
+    use crate::core::model::{NonEmptyCell, GridFunctions};
 
     #[test]
     fn validate_row_test() {

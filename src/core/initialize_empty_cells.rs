@@ -1,5 +1,5 @@
 use ndarray::Array2;
-use crate::core::model::{NonEmptyCell, EmptyCell};
+use crate::core::model::{NonEmptyCell, EmptyCell, GridFunctions};
 
 
 // ```given a grid returns for each empty cell the possible values.
@@ -28,12 +28,10 @@ fn get_existing_values(grid: &Array2<NonEmptyCell>, guess: &EmptyCell) -> Vec<u8
 
 #[cfg(test)]
 mod tests {
-    use crate::solver_helper::solver_helper::initialize_empty_values;
-    use crate::utilities::utilities::get_quadrant_position;
 
     use super::*;
     use crate::core::model::EmptyCellFunctions;
-    use crate::core::utilities::iters_equal_any_order;
+    use crate::core::utilities::{iters_equal_any_order,get_quadrant_position};
     use crate::core::solver_helper::initialize_empty_values;
 
     #[test]
