@@ -5,41 +5,80 @@
     <title>Title</title>
 
     <style>
-        table {margin: 0; border-collapse: collapse; font-family: Calibri, sans-serif; }
-        colgroup, tbody { border: solid medium; }
-        .house { border: solid thick; height: 270px; width:270px; text-align: center; padding: 0; }
-        .cell { border: solid thin; height: 90px; width:90px; text-align: center; padding: 0; }
+
+        .grid {
+            border: solid thick;
+            height: 810px;
+            width: 810px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            display: grid;
+            grid-template-rows: repeat(3, 270px);
+            grid-template-columns: repeat(3, 270px);
+        }
+
+
+        .house {
+            border: solid thick;
+            height: 270px;
+            width: 270px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            display: grid;
+            grid-template-rows: repeat(3, 90px);
+            grid-template-columns: repeat(3, 90px);
+        }
+
+        .value {
+            height: 90px;
+            width: 90px;
+            border: solid thin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+        }
+
+        .pencil-marks {
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            display: grid;
+            grid-template-rows: repeat(3, 30px);
+            grid-template-columns: repeat(3, 30px);
+        }
+
+        .pencil-marks div {
+            height: 30px;
+            width: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
-<div class="box">
-<table>
-    <colgroup><col><col><col>
-    <colgroup><col><col><col>
-    <colgroup><col><col><col>
-    <tbody>
-{{#each house_row}}
-        <tr>
-            {{#each house}}
-            <td class="house">
-                <table>
-                    <tbody>
-                    <tr>
-
-                        <td class="cell">
-                            <table></table>
-                        </td>
-                        <td class="cell"></td><td class="cell"></td></tr>
-                    <tr><td class="cell"></td><td class="cell"></td><td class="cell"></td></tr>
-                    <tr><td class="cell"></td><td class="cell"></td><td class="cell"></td></tr>
-                    </tbody>
-                </table>
-            </td>
+<div class="grid">
+    {{#each house}}
+        <div class="house">
+            {{#each cell}}
+                {{#if this.value}}
+                    <div class="value">{{this.value}}</div>
+                {{^}}
+                    <div class="pencil-marks">
+                        {{#each this.pencil-marks}}
+                            <div>{{this}}</div>
+                        {{/each}}
+                    </div>
+                {{/if}}
             {{/each}}
-        </tr>
-{{/each}}
-    </tbody>
-</table>
+        </div>
+    {{/each}}
 </div>
 </body>
 </html>
