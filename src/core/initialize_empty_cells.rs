@@ -31,7 +31,7 @@ mod tests {
 
     use super::*;
     use crate::core::model::EmptyCellFunctions;
-    use crate::core::utilities::{iters_equal_any_order,get_quadrant_position};
+    use crate::core::utilities::{iters_equal_any_order, get_quadrant};
     use crate::core::solver_helper::initialize_empty_values;
 
     #[test]

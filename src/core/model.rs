@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use logs::debug;
 use ndarray::Array2;
 
-use crate::core::utilities::get_quadrant_position;
+use crate::core::utilities::get_quadrant;
 
 // ```it describes a cell position and its value
 #[derive(Debug, Default, Clone)]
@@ -52,7 +52,7 @@ impl GridFunctions for Array2<NonEmptyCell> {
     fn add_quadrants_information(&mut self) {
         for i in 0..9 {
             for j in 0..9 {
-                self[[i, j]].quadrant = get_quadrant_position(i, j);
+                self[[i, j]].quadrant = get_quadrant(i, j);
                 debug!("row = {}, column = {}, and quadrant {}", i, j, self[[i, j]].quadrant);
             }
         }
@@ -68,7 +68,7 @@ impl EmptyCellFunctions for EmptyCell {
         return EmptyCell {
             row,
             column,
-            quadrant: get_quadrant_position(row, column),
+            quadrant: get_quadrant(row, column),
             values: vec![1, 2, 3, 4, 5, 6, 7, 8, 9],
         };
     }
@@ -76,7 +76,7 @@ impl EmptyCellFunctions for EmptyCell {
         return EmptyCell {
             row,
             column,
-            quadrant: get_quadrant_position(row, column),
+            quadrant: get_quadrant(row, column),
             values,
         };
     }

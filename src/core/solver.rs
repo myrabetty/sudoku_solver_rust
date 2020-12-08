@@ -3,7 +3,7 @@ use ndarray::Array2;
 use crate::core::model::{NonEmptyCell, EmptyCell, Guess, GridFunctions};
 use crate::core::initialize_empty_cells::remove_placed_values;
 use crate::core::solver_helper::{initialize_empty_values, find_new_guess};
-use crate::core::utilities::get_quadrant_position;
+use crate::core::utilities::get_quadrant;
 
 
 pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
@@ -32,6 +32,7 @@ pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
 
             prepare_to_next_iteration(&mut guesses, &mut grid, &new_value);
         } else {
+            //show_sudoku_state(&grid, &guesses);
             panic!("we cannot find a valid guess this should not happen!")
         }
     }
@@ -54,7 +55,7 @@ fn prepare_to_next_iteration(empty_cells: &mut Vec<EmptyCell>, grid: &mut Array2
     empty_cells
         .iter_mut()
         .for_each(|mut x| {
-            if x.row == new_value.row || x.column == new_value.column || get_quadrant_position(new_value.row, new_value.column) == x.quadrant {
+            if x.row == new_value.row || x.column == new_value.column || get_quadrant(new_value.row, new_value.column) == x.quadrant {
                 x.eliminate(new_value.value)
             }
         });

@@ -20,7 +20,7 @@
         }
 
 
-        .house {
+        .quadrant {
             border: solid thick;
             height: 270px;
             width: 270px;
@@ -64,18 +64,18 @@
 </head>
 <body>
 <div class="grid">
-    {{#each house}}
-        <div class="house">
-            {{#each cell}}
-                {{#if this.value}}
-                    <div class="value">{{this.value}}</div>
-                {{^}}
-                    <div class="pencil-marks">
-                        {{#each this.pencil-marks}}
-                            <div>{{this}}</div>
-                        {{/each}}
-                    </div>
-                {{/if}}
+    {{#each quadrants}}
+        <div class="quadrant">
+            {{#each this}}
+                    {{#if this.value}}
+                        <div class="value">{{this.value}}</div>
+                    {{^}}
+                        <div class="pencil-marks">
+                            {{#each this.pencil_marks}}
+                                <div>{{this}}</div>
+                            {{/each}}
+                        </div>
+                    {{/if}}
             {{/each}}
         </div>
     {{/each}}

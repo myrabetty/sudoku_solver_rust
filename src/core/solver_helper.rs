@@ -17,19 +17,10 @@ pub(crate) fn find_new_guess(mut allowed_values: &mut Vec<EmptyCell>) -> Result<
         Some(guessed_value) => return Ok(guessed_value),
         None => {}
     }
-
-    debug!("allowed values before applying two points strategy {:?}", allowed_values);
-
     match apply_two_cells_strategy(&mut allowed_values) {
         Some(guessed_value) => return Ok(guessed_value),
         None => {}
     }
-
-    match try_jumping(&mut allowed_values) {
-        Some(guessed_value) => return Ok(guessed_value),
-        None => {}
-    }
-
     return Err(());
 }
 
@@ -195,7 +186,6 @@ fn apply_two_cells_strategy(mut allowed_values: &mut Vec<EmptyCell>) -> Option<G
             }
         }
     }
-    debug!("this is the array of allowed values {:?}", allowed_values);
     return None;
 }
 
