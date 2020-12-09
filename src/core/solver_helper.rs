@@ -3,6 +3,8 @@ use logs::debug;
 use ndarray::Array2;
 
 use crate::core::model::{EmptyCell, EmptyCellFunctions, Guess, NonEmptyCell};
+use crate::core::naked_tuplets_stategies::naked_pairs_strategy;
+use crate::core::hidden_tuplets_strategies::{hidden_pairs_strategy, hidden_triplets_strategy};
 
 //```in this module there are all functions that helps th solver to find a solution
 
@@ -25,7 +27,7 @@ pub(crate) fn find_new_guess(mut allowed_values: &mut Vec<EmptyCell>) -> Result<
 }
 
 
-pub fn apply_one_cell_strategies(allowed_values: &Vec<EmptyCell>) -> Option<Guess> {
+fn apply_one_cell_strategies(allowed_values: &Vec<EmptyCell>) -> Option<Guess> {
     //find first empty cell with one only option
     debug!("trying to find cell with only one option");
     match returns_first_unique_guess(&allowed_values) {
@@ -124,41 +126,17 @@ fn find_unique_appearances(guesses: &Vec<EmptyCell>, value: &u8, index: usize, f
 // will remove the values if any that appears in only one row/column within a quadrant from the other quadrants
 // and same row/column and then
 fn apply_two_cells_strategy(mut allowed_values: &mut Vec<EmptyCell>) -> Option<Guess> {
-     remove_values_in_one_location_only(&mut allowed_values);
+    remove_values_in_one_location_only(&mut allowed_values);
+    hidden_pairs_strategy(&mut allowed_values);
 
-    for value_1 in 1..10_u8 {
-        for value_2 in (value_1 + 1)..10_u8 {
-            for index in 0..8_usize {
-                match find_two_values_in_only_two_places(&mut allowed_values, value_1, value_2, index, |x: &EmptyCell, index| x.row == index) {
-                    Some(index) => {
-                        debug!("Found unique doublet {:} {:} in row {:}", value_1, value_2, index);
-                        match apply_one_cell_strategies(&allowed_values) {
-                            Some(guess) => return Some(guess),
-                            None => {}
-                        }
-                    }
-                    None => {}
-                }
-                match find_two_values_in_only_two_places(&mut allowed_values, value_1, value_2, index, |x: &EmptyCell, index| x.column == index) {
-                    Some(index) => {
-                        debug!("Found unique doublet {:} {:} in column {:}", value_1, value_2, index);
-                        match apply_one_cell_strategies(&allowed_values) {
-                            Some(guess) => return Some(guess),
-                            None => {}
-                        }
-                    }
-                    None => {}
-                }
-            }
-        }
-    }
-    return None;
+    naked_pairs_strategy(&mut allowed_values);
+    hidden_triplets_strategy(&mut allowed_values);
+    return apply_one_cell_strategies(&allowed_values);
 }
 
 // finds a value that is in the same quadrant appearing at least twice in a column or row
 // if it finds such a value it removes the value from the remaining segment of row or column in the other quadrants
-// and check if it is possible to return a single guess.
-fn remove_values_in_one_location_only(mut allowed_values: &mut &mut Vec<EmptyCell>) -> Option<Guess> {
+fn remove_values_in_one_location_only(mut allowed_values: &mut &mut Vec<EmptyCell>) {
     for value in 1..10_u8 {
         for quadrant in 0..9 {
             let quadrant_values: Vec<EmptyCell> = allowed_values.clone()
@@ -170,10 +148,6 @@ fn remove_values_in_one_location_only(mut allowed_values: &mut &mut Vec<EmptyCel
                 Some(row) => {
                     debug!("Analyzing quadrant: {:}. Value {:} that can appear only in this row {:}", quadrant, value, row);
                     remove_value_from_other_segments(&mut allowed_values, row, quadrant, value, |x: &EmptyCell, row, quadrant| x.row == row && x.quadrant != quadrant);
-                    match apply_one_cell_strategies(&allowed_values) {
-                        Some(guess) => return Some(guess),
-                        None => {}
-                    }
                 }
                 None => {}
             }
@@ -182,16 +156,11 @@ fn remove_values_in_one_location_only(mut allowed_values: &mut &mut Vec<EmptyCel
                 Some(column) => {
                     debug!("Analyzing quadrant: {:}. Value {:} that can appear only in this column {:}", quadrant, value, column);
                     remove_value_from_other_segments(&mut allowed_values, column, quadrant, value, |x: &EmptyCell, column, quadrant| x.column == column && x.quadrant != quadrant);
-                    match apply_one_cell_strategies(&allowed_values) {
-                        Some(guess) => return Some(guess),
-                        None => {}
-                    }
                 }
                 None => {}
             }
         }
     }
-    return None;
 }
 
 fn remove_value_from_other_segments(allowed_values: &mut Vec<EmptyCell>, location: usize, quadrant: usize, value: u8, filter: fn(&EmptyCell, usize, usize) -> bool) {
@@ -215,27 +184,6 @@ fn return_doublet_in_one_location(quadrant_values: &Vec<EmptyCell>, transform: f
         true => return Some(locations[0]),
         _ => None
     }
-}
-
-// finds if there is a couple of values that appear in only two cells in a row/column/quadrant if so remove all other values from those cells.
-fn find_two_values_in_only_two_places(allowed_values: &mut Vec<EmptyCell>, value_1: u8, value_2: u8, index: usize, filter: fn(&EmptyCell, usize) -> bool) -> Option<usize> {
-    let cells_with_value_1 = allowed_values
-        .iter()
-        .filter(|x| filter(x, index) && x.values.contains(&value_1)).count();
-
-    let cells_with_value_2 = allowed_values
-        .iter()
-        .filter(|x| filter(x, index) && x.values.contains(&value_2)).count();
-
-    let cells_with_couple: Vec<usize> = allowed_values
-        .iter()
-        .positions(|x| filter(x, index) && x.values.contains(&value_1) && x.values.contains(&value_2)).collect();
-    if cells_with_couple.len() == 2 && cells_with_value_1 == 2 && cells_with_value_2 == 2 {
-        allowed_values[cells_with_couple[0]].values = vec![value_1, value_2];
-        allowed_values[cells_with_couple[1]].values = vec![value_1, value_2];
-        return Some(index);
-    }
-    return None;
 }
 
 #[cfg(test)]
