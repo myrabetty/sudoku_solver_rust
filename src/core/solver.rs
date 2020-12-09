@@ -4,6 +4,7 @@ use crate::core::model::{NonEmptyCell, EmptyCell, Guess, GridFunctions};
 use crate::core::initialize_empty_cells::remove_placed_values;
 use crate::core::solver_helper::{initialize_empty_values, find_new_guess};
 use crate::core::utilities::get_quadrant;
+use crate::template::template::show_sudoku_state;
 
 
 pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
@@ -32,7 +33,7 @@ pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
 
             prepare_to_next_iteration(&mut guesses, &mut grid, &new_value);
         } else {
-            //show_sudoku_state(&grid, &guesses);
+            show_sudoku_state(&grid, &guesses);
             panic!("we cannot find a valid guess this should not happen!")
         }
     }
