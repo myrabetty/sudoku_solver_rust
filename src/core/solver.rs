@@ -8,33 +8,24 @@ use crate::template::template::show_sudoku_state;
 
 
 pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
-    let mut complements: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>, Guess)> = Vec::new();
     let mut guesses: Vec<EmptyCell> = initialize_empty_values(&grid);
     remove_placed_values(&grid, &mut guesses);
     while !grid.is_complete() {
         if guesses.is_empty() || is_a_guess_empty(&guesses) {
-            let complement = complements.pop().unwrap();
-            warn!("taking complement for choice {:?} after ruling solution as invalid", complement.2);
-            guesses = complement.1;
-            grid = complement.0;
-            //debug!("grid at this check point is {:?}", grid);
+            warn!("something is terribly wrong!");
+            show_sudoku_state(&grid,  &guesses);
+            return grid;
         }
 
         // whatever happens before I arrive here with a set of allowed values and a grid.
         let result = find_new_guess(&mut guesses);
         if result.is_ok() {
             let new_value = result.unwrap();
-            info!("value is {:?}", new_value);
-            let complement_guesses = get_complement_choice(&guesses, &new_value);
-
-            if !complement_guesses.is_empty() {
-                complements.push((grid.clone(), complement_guesses, new_value.clone()));
-            }
-
             prepare_to_next_iteration(&mut guesses, &mut grid, &new_value);
         } else {
-            show_sudoku_state(&grid, &guesses);
-            panic!("we cannot find a valid guess this should not happen!")
+            warn!("we cannot find a valid guess with the strategies implemented!");
+            show_sudoku_state(&grid,  &guesses);
+            return grid;
         }
     }
 

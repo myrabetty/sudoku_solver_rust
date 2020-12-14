@@ -6,7 +6,7 @@ use crate::core::model::EmptyCell;
 pub fn hidden_pairs_strategy(mut allowed_values: &mut &mut Vec<EmptyCell>) {
     for value_1 in 1..10_u8 {
         for value_2 in (value_1 + 1)..10_u8 {
-            for index in 0..8_usize {
+            for index in 0..9_usize {
                 match find_connected_hidden_pairs(&mut allowed_values, value_1, value_2, index, |x: &EmptyCell, index| x.row == index) {
                     Some(index) => {
                         debug!("Found hidden pair {:} {:} in row {:}", value_1, value_2, index);
@@ -35,7 +35,7 @@ pub fn hidden_triplets_strategy(mut allowed_values: &mut &mut Vec<EmptyCell>) {
     for value_1 in 1..10_u8 {
         for value_2 in (value_1 + 1)..10_u8 {
             for value_3 in (value_2 + 1)..10_u8 {
-                for index in 0..8_usize {
+                for index in 0..9_usize {
                     match find_connected_hidden_triplets(&mut allowed_values, value_1, value_2, value_3, index, |x: &EmptyCell, index| x.row == index) {
                         Some(index) => {
                             debug!("Found hidden triplet {:} {:} {:} in row {:}", value_1, value_2, value_3, index);

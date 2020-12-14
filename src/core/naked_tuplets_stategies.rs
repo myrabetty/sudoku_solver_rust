@@ -4,7 +4,7 @@ use logs::debug;
 pub fn naked_pairs_strategy(mut allowed_values: &mut &mut Vec<EmptyCell>) {
     for value_1 in 1..10_u8 {
         for value_2 in (value_1 + 1)..10_u8 {
-            for index in 0..8_usize {
+            for index in 0..9_usize {
                 match find_connected_naked_pairs(&mut allowed_values, value_1, value_2, index, |x: &EmptyCell, index| x.row == index) {
                     true => {
                         debug!("Found naked pair {:} {:} in row {:}", value_1, value_2, index);

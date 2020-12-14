@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use logs::debug;
 use ndarray::Array2;
 
-use crate::core::utilities::get_quadrant;
+use crate::core::utilities::{get_quadrant, iters_equal_any_order};
 
 // ```it describes a cell position and its value
 #[derive(Debug, Default, Clone)]
@@ -28,6 +28,16 @@ impl EmptyCell {
         }
     }
 }
+
+impl PartialEq for EmptyCell {
+    fn eq(&self, other: &Self) -> bool {
+        if self.row == other.row && self.column == other.column {
+            return iters_equal_any_order(self.values.clone().into_iter(), other.values.clone().into_iter());
+        }
+        return false;
+    }
+}
+
 
 #[derive(Debug, Default, Clone)]
 pub struct Guess {

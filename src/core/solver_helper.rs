@@ -2,9 +2,11 @@ use itertools::{all, Itertools};
 use logs::debug;
 use ndarray::Array2;
 
+use crate::core::hidden_tuplets_strategies::{hidden_pairs_strategy, hidden_triplets_strategy};
 use crate::core::model::{EmptyCell, EmptyCellFunctions, Guess, NonEmptyCell};
 use crate::core::naked_tuplets_stategies::naked_pairs_strategy;
-use crate::core::hidden_tuplets_strategies::{hidden_pairs_strategy, hidden_triplets_strategy};
+use crate::core::x_wing_strategy::x_wing_strategy;
+use crate::core::utilities::iters_equal_any_order;
 
 //```in this module there are all functions that helps th solver to find a solution
 
@@ -126,12 +128,29 @@ fn find_unique_appearances(guesses: &Vec<EmptyCell>, value: &u8, index: usize, f
 // will remove the values if any that appears in only one row/column within a quadrant from the other quadrants
 // and same row/column and then
 fn apply_two_cells_strategy(mut allowed_values: &mut Vec<EmptyCell>) -> Option<Guess> {
-    remove_values_in_one_location_only(&mut allowed_values);
-    hidden_pairs_strategy(&mut allowed_values);
+    // we need to apply this set of astrategies over and over again. Only stop if they removec nothing.
 
-    naked_pairs_strategy(&mut allowed_values);
-    hidden_triplets_strategy(&mut allowed_values);
-    return apply_one_cell_strategies(&allowed_values);
+    let mut guess: Option<Guess> = None;
+    let mut valuesAreUpdated = true;
+    while guess.is_none() && valuesAreUpdated {
+        let allowed_values_old = allowed_values.clone();
+        remove_values_in_one_location_only(&mut allowed_values);
+        hidden_pairs_strategy(&mut allowed_values);
+        naked_pairs_strategy(&mut allowed_values);
+        hidden_triplets_strategy(&mut allowed_values);
+        x_wing_strategy(&mut allowed_values);
+
+        valuesAreUpdated = false;
+        for i in 0..allowed_values_old.len() {
+            if allowed_values_old[i].values != allowed_values[i].values {
+                valuesAreUpdated = true;
+                break;
+            }
+        }
+
+        guess = apply_one_cell_strategies(&allowed_values);
+    }
+    return guess;
 }
 
 // finds a value that is in the same quadrant appearing at least twice in a column or row
