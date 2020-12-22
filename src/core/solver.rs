@@ -1,4 +1,4 @@
-use logs::{debug, info, warn};
+use log::{debug, info, warn};
 use ndarray::Array2;
 use crate::core::model::{NonEmptyCell, EmptyCell, Guess, GridFunctions};
 use crate::core::initialize_empty_cells::remove_placed_values;

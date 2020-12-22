@@ -1,5 +1,5 @@
 use crate::core::model::EmptyCell;
-use logs::debug;
+use log::debug;
 
 pub fn naked_pairs_strategy(mut allowed_values: &mut &mut Vec<EmptyCell>) {
     for value_1 in 1..10_u8 {

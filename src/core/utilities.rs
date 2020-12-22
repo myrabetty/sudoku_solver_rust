@@ -1,7 +1,7 @@
 use std::collections::{hash_map::Entry, HashMap};
 use std::hash::Hash;
 
-use logs::debug;
+use log::debug;
 
 use crate::core::model::EmptyCell;
 

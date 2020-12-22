@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::Write;
 
 use handlebars::Handlebars;
-use logs::{debug, error};
+use log::{debug, error};
 use ndarray::Array2;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -27,7 +27,7 @@ struct Cell {
 pub fn show_sudoku_state(grid: &Array2<NonEmptyCell>, allowed_values: &Vec<EmptyCell>) {
     let mut reg = Handlebars::new();
     let mut sudoku = Sudoku::default();
-    reg.register_template_file("template", "/Users/esemboloni/source/pocs/sudoku_solver/src/template/grid_template.hbs").unwrap();
+    reg.register_template_file("template", "src/template/grid_template.hbs").unwrap();
 
     for i in 0..9 {
         for j in 0..9 {
@@ -43,7 +43,7 @@ pub fn show_sudoku_state(grid: &Array2<NonEmptyCell>, allowed_values: &Vec<Empty
     }
 
     let result = reg.render("template", &json!(sudoku)).unwrap();
-    let mut file = File::create("/Users/esemboloni/source/pocs/sudoku_solver/src/template/result.html").unwrap();
+    let mut file = File::create("src/template/result.html").unwrap();
     file.write(result.as_bytes());
 }
 

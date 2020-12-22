@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use logs::debug;
+use log::debug;
 
 use crate::core::model::EmptyCell;
 

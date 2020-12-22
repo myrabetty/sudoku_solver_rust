@@ -1,5 +1,5 @@
 use itertools::{all, Itertools};
-use logs::debug;
+use log::debug;
 use ndarray::Array2;
 
 use crate::core::hidden_tuplets_strategies::{hidden_pairs_strategy, hidden_triplets_strategy};

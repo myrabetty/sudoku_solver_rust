@@ -1,6 +1,5 @@
 use std::collections::HashMap;
-
-use logs::debug;
+use log::debug;
 use ndarray::Array2;
 
 use crate::core::utilities::{get_quadrant, iters_equal_any_order};

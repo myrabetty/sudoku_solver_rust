@@ -59,15 +59,15 @@ pub fn generate_grid(input_data: Vec<char>) -> Array2<NonEmptyCell> {
     grid
 }
 
-fn assign_value_and_increase_index(grid: &mut Array2<NonEmptyCell>, i: &mut usize, j: &mut usize, a: char) -> Result<usize, &'static str> {
+fn assign_value_and_increase_index(grid: &mut Array2<NonEmptyCell>, i: &mut usize, j: &mut usize, a: char) -> Result<usize, String> {
     return if a >= '0' && a <= '9' {
         let b = a as u8 - '0' as u8;
         grid[[*i, *j]].value = b;
         Ok(*j + 1)
-    } else if a == ' ' || a == '\n' || a == ',' {
+    } else if a == ' ' || a == '\n' || a == ','  || a == '\r' {
         Ok(*j)
     } else {
-        Err("character not allowed")
+        Err(format!("character {} not allowed", a))
     };
 }
 
