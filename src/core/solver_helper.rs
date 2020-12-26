@@ -14,6 +14,7 @@ use crate::core::utilities::iters_equal_any_order;
 // it finds the value N-tuple of values that is in a N-tuple of cell and select a value in
 // the N-tuple.
 // returns the cell with a value that is to be added in the grid.
+// it applies only deterministic algorithms
 pub(crate) fn find_new_guess(mut allowed_values: &mut Vec<EmptyCell>) -> Result<Guess, ()> {
     debug!("eliminate guesses for values that appear in only one row/column within the quadrant");
 

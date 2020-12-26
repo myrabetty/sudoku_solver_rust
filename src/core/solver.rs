@@ -5,16 +5,22 @@ use crate::core::initialize_empty_cells::remove_placed_values;
 use crate::core::solver_helper::{initialize_empty_values, find_new_guess};
 use crate::core::utilities::get_quadrant;
 use crate::template::template::show_sudoku_state;
+use crate::core::simple_coloring::apply_simple_coloring;
 
 
 pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
+    let mut complements: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>, Guess)> = Vec::new();
     let mut guesses: Vec<EmptyCell> = initialize_empty_values(&grid);
     remove_placed_values(&grid, &mut guesses);
     while !grid.is_complete() {
         if guesses.is_empty() || is_a_guess_empty(&guesses) {
-            warn!("something is terribly wrong!");
-            show_sudoku_state(&grid,  &guesses);
-            return grid;
+            let complement = complements.pop().unwrap();
+            // warn!("something is terribly wrong!");
+            // show_sudoku_state(&grid,  &guesses);
+            warn!("taking complement for choice {:?} after ruling solution as invalid", complement.2);
+            guesses = complement.1;
+            grid = complement.0;
+            //return grid;
         }
 
         // whatever happens before I arrive here with a set of allowed values and a grid.
@@ -23,9 +29,18 @@ pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
             let new_value = result.unwrap();
             prepare_to_next_iteration(&mut guesses, &mut grid, &new_value);
         } else {
-            warn!("we cannot find a valid guess with the strategies implemented!");
-            show_sudoku_state(&grid,  &guesses);
-            return grid;
+            let result = apply_simple_coloring(&guesses);
+            if result.is_some() {
+                let new_value = result.unwrap();
+                info!("value is {:?}", new_value);
+                let complement_guesses = get_complement_choice(&guesses, &new_value);
+                complements.push((grid.clone(), complement_guesses, new_value.clone()));
+                prepare_to_next_iteration(&mut guesses, &mut grid, &new_value);
+            } else {
+                warn!("we cannot find a valid guess with the strategies implemented!");
+                show_sudoku_state(&grid, &guesses);
+                return grid;
+            }
         }
     }
 
@@ -64,7 +79,7 @@ fn is_a_guess_empty(guesses: &Vec<EmptyCell>) -> bool {
     };
 }
 
-// ``` removes the chosen value from the array of possible values
+// ``` removes the chosen value from the array of possible values.
 fn get_complement_choice(current_options: &Vec<EmptyCell>, choice: &Guess) -> Vec<EmptyCell> {
     let mut empty_cells = current_options.clone();
     let index = empty_cells.iter()

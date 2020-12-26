@@ -26,6 +26,10 @@ impl EmptyCell {
             self.values.remove(index);
         }
     }
+
+    pub(crate) fn is_connected(&self, candidate: &EmptyCell) -> bool {
+        return self.column == candidate.column || self.row == candidate.row || self.quadrant == candidate.quadrant;
+    }
 }
 
 impl PartialEq for EmptyCell {
@@ -55,6 +59,7 @@ pub trait GridFunctions {
 pub trait EmptyCellFunctions {
     fn with_all_values(row: usize, column: usize) -> Self;
     fn new(row: usize, column: usize, values: Vec<u8>) -> Self;
+    //fn is_connected(&self, candidate: &EmptyCell) -> Option<&EmptyCell>;
 }
 
 impl GridFunctions for Array2<NonEmptyCell> {
