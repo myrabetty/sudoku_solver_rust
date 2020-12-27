@@ -85,17 +85,17 @@ fn get_complement_choice(current_options: &Vec<EmptyCell>, choice: &Guess) -> Ve
     let index = empty_cells.iter()
         .position(|x| x.row == choice.row && x.column == choice.column).unwrap();
 
-    // debug!("value to remove is {:?}", choice);
     let values: Vec<u8> = empty_cells[index]
         .values.clone().into_iter()
         .filter(|&x| x != choice.value).collect();
-    // debug!("before removing the value we have {:?}", empty_cells[index]);
+
     if values.len() == 0 {
         empty_cells.remove(index);
     } else {
         empty_cells[index].values = values;
-        // debug!("after removing the value we have {:?}", empty_cells[index]);
-    };
+    }
+
+    debug!("options are now {:?}", empty_cells);
     return empty_cells;
 }
 
@@ -125,8 +125,8 @@ mod tests {
         let mut new_guess: Guess = Guess { row: 0, column: 0, value: 9 };
         assert!(iters_equal_any_order(guesses[0].values.clone().into_iter(), vec![1, 2, 3, 4, 5, 6, 7, 8, 9].into_iter()));
 
-        get_complement_choice(&mut guesses, &new_guess);
-        assert!(iters_equal_any_order(guesses[0].values.clone().into_iter(), vec![1, 2, 3, 4, 5, 6, 7, 8].into_iter()));
+        let complement_guesses = get_complement_choice(&mut guesses, &new_guess);
+        assert!(iters_equal_any_order(complement_guesses[0].values.clone().into_iter(), vec![1, 2, 3, 4, 5, 6, 7, 8].into_iter()));
     }
 
     #[test]
@@ -138,7 +138,6 @@ mod tests {
         let solution_input_data = read_input_file("samples/solution_example_4.txt");
         let expected_grid = generate_grid(solution_input_data);
         assert_eq!(complete_grid, expected_grid);
-
     }
 }
 
