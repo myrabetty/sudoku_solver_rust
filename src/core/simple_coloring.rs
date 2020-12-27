@@ -35,6 +35,7 @@ pub fn apply_simple_coloring(guesses: &Vec<EmptyCell>) -> Option<Guess> {
             debug!("connected length for value {:} is {:}", value, connected_length);
         }
     }
+
     return match chain.length {
         2 => {
             debug!("no simple colouring detected");

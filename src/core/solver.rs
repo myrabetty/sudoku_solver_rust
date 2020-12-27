@@ -104,6 +104,9 @@ mod tests {
     use super::*;
     use crate::core::model::{EmptyCell, EmptyCellFunctions, Guess};
     use crate::core::utilities::iters_equal_any_order;
+    use crate::core::initialize_grid::{read_input_file, generate_grid};
+    use crate::core::validator::validate_grid;
+    use itertools::assert_equal;
 
     #[test]
     fn is_a_guess_empty_test() {
@@ -124,6 +127,18 @@ mod tests {
 
         get_complement_choice(&mut guesses, &new_guess);
         assert!(iters_equal_any_order(guesses[0].values.clone().into_iter(), vec![1, 2, 3, 4, 5, 6, 7, 8].into_iter()));
+    }
+
+    #[test]
+    fn solve_is_success() {
+        let input_data = read_input_file("samples/example_4.txt");
+        let grid = generate_grid(input_data);
+        validate_grid(&grid);
+        let complete_grid = solve(grid);
+        let solution_input_data = read_input_file("samples/solution_example_4.txt");
+        let expected_grid = generate_grid(solution_input_data);
+        assert_eq!(complete_grid, expected_grid);
+
     }
 }
 

@@ -5,7 +5,7 @@ use ndarray::Array2;
 use crate::core::utilities::{get_quadrant, iters_equal_any_order};
 
 // ```it describes a cell position and its value
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone,Eq, PartialEq)]
 pub struct NonEmptyCell {
     pub value: u8,
     pub quadrant: usize,
