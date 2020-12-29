@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="mystyle.css">
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script>
+        function postInputSudoku() {
+            document.getElementById("grid").innerHTML = "Hello World";
+        }
+
+        const vals = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+        function verifyValue(event) {
+            console.log(event);
+            if (vals.includes(event.key)) {
+                event.target.innerHTML = event.key;
+            }
+            event.preventDefault();
+        }
+
+        function afterLoad() {
+            document.querySelectorAll('.value').forEach(e => e.addEventListener('keydown', verifyValue))
+        }
+
+        window.onload = afterLoad;
+
+    </script>
+
+</head>
+<body>
+<div class="grid" id="grid">
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+    <div class="quadrant">
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+        <div class="value" contenteditable="true"></div>
+    </div>
+
+</div>
+</body>
+
+
+<button onclick="postInputSudoku()">Click me</button>
+
+<p id="demo"></p>
+
+</body>
+</html>
+
