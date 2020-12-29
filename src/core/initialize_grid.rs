@@ -3,31 +3,17 @@ use std::io::{Read, Write};
 
 use ndarray::Array2;
 
-use crate::core::model::{NonEmptyCell, GridFunctions};
+use crate::core::model::{NonEmptyCell, GridFunctions, Guess};
 
-pub fn write_output_file(grid: &Array2<NonEmptyCell>, filename: &str) {
-    let mut file = File::create(filename).expect("file cannot be created");
-    for i in 0..9 {
-        let mut line = String::new();
-        let mut index = 0;
-        grid.row(i).iter().for_each(|element| {
-            line.push_str(element.value.to_string().as_str());
-            match index {
-                2 | 5 => line.push_str(" "),
-                _ => {}
-            }
-            index = index + 1;
-        });
-        line = line + "\n";
-        match i {
-            2 | 5 => line = line + "\n",
-            _ => {}
-        }
-        file.write(line.as_bytes());
-    }
+
+pub fn map_request_to_grid(input_values: &Vec<Guess>) -> Array2<NonEmptyCell> {
+    let mut grid: Array2<NonEmptyCell> = Array2::default((9, 9));
+    input_values.iter().for_each(|input_value| grid[[input_value.row, input_value.column]].value = input_value.value);
+    grid.add_quadrants_information();
+    return grid;
 }
 
-
+// this is going to be used only for tenting purposes until I change the input to a json file
 pub fn read_input_file(filename: &str) -> Vec<char> {
     let mut file = File::open(filename).expect("File not found");
     let mut content = String::new();
@@ -35,7 +21,7 @@ pub fn read_input_file(filename: &str) -> Vec<char> {
     content.chars().collect()
 }
 
-
+// this is going to be used only for testing purposes maybe??
 pub fn generate_grid(input_data: Vec<char>) -> Array2<NonEmptyCell> {
     let mut grid: Array2<NonEmptyCell> = Array2::default((9, 9));
     grid.add_quadrants_information();
@@ -64,7 +50,7 @@ fn assign_value_and_increase_index(grid: &mut Array2<NonEmptyCell>, i: &mut usiz
         let b = a as u8 - '0' as u8;
         grid[[*i, *j]].value = b;
         Ok(*j + 1)
-    } else if a == ' ' || a == '\n' || a == ','  || a == '\r' {
+    } else if a == ' ' || a == '\n' || a == ',' || a == '\r' {
         Ok(*j)
     } else {
         Err(format!("character {} not allowed", a))

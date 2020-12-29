@@ -8,7 +8,7 @@ use crate::template::template::show_sudoku_state;
 use crate::core::simple_coloring::apply_simple_coloring;
 
 
-pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
+pub fn solve(mut grid: Array2<NonEmptyCell>) -> Result<Array2<NonEmptyCell>, String> {
     let mut complements: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>, Guess)> = Vec::new();
     let mut guesses: Vec<EmptyCell> = initialize_empty_values(&grid);
     remove_placed_values(&grid, &mut guesses);
@@ -39,13 +39,13 @@ pub fn solve(mut grid: Array2<NonEmptyCell>) -> Array2<NonEmptyCell> {
             } else {
                 warn!("we cannot find a valid guess with the strategies implemented!");
                 show_sudoku_state(&grid, &guesses);
-                return grid;
+                return Err(format!("cannot find a solution fo this input"));
             }
         }
     }
 
     info!("Grid is complete");
-    return grid;
+    return Ok(grid);
 }
 
 fn prepare_to_next_iteration(empty_cells: &mut Vec<EmptyCell>, grid: &mut Array2<NonEmptyCell>, new_value: &Guess) {
@@ -137,7 +137,7 @@ mod tests {
         let complete_grid = solve(grid);
         let solution_input_data = read_input_file("samples/solution_example_4.txt");
         let expected_grid = generate_grid(solution_input_data);
-        assert_eq!(complete_grid, expected_grid);
+        assert_eq!(complete_grid.unwrap(), expected_grid);
     }
 }
 

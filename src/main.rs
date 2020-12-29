@@ -1,5 +1,5 @@
 use sudoku_solver::core::initialize_grid;
-use sudoku_solver::core::initialize_grid::{read_input_file, generate_grid, write_output_file};
+use sudoku_solver::core::initialize_grid::{read_input_file, generate_grid, map_request_to_grid};
 use sudoku_solver::core::solver::solve;
 use sudoku_solver::core::validator::validate_grid;
 use sudoku_solver::template::template::show_sudoku_state;
@@ -10,6 +10,7 @@ use serde::Deserialize;
 use actix_web::body::Body;
 use actix_web::web::Json;
 use log::debug;
+use std::ops::Deref;
 
 #[derive(Deserialize)]
 struct Info {
@@ -36,7 +37,11 @@ async fn style_sheet() -> HttpResponse {
 
 async fn grid_send(request: Json<Vec<Guess>>) -> impl Responder {
     debug!("request is {:?}", request);
-    HttpResponse::Ok().body("got the request all right")
+    HttpResponse::Ok().body("got the request all right");
+    let grid = map_request_to_grid(&request.deref());
+    validate_grid(&grid); //to do if grid is not valid return error.
+    let complete_grid = solve(grid);
+
 }
 
 #[actix_web::main]
