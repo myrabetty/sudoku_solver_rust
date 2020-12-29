@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use log::debug;
 use ndarray::Array2;
+use serde::{Deserialize, Serialize};
 
 use crate::core::utilities::{get_quadrant, iters_equal_any_order};
 
@@ -42,7 +43,7 @@ impl PartialEq for EmptyCell {
 }
 
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Guess {
     pub row: usize,
     pub column: usize,

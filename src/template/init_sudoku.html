@@ -7,8 +7,36 @@
 
     <script>
         function postInputSudoku() {
-            document.getElementById("grid").innerHTML = "Hello World";
+
+            let i = 0;
+            let j = 0;
+            let grid = [];
+            document.querySelectorAll('.value').forEach(e => {
+                console.log(e.innerHTML);
+                let value = 0;
+                if (e.innerHTML) value = parseInt(e.innerHTML);
+                grid.push({row: j, column: i, value: value})
+                i = i + 1;
+                if (i === 9) {
+                    j = j + 1;
+                    i = 0;
+                }
+            });
+            // request options
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(grid),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+
+// send POST request
+            fetch("/grid_send", options)
+                .then(res => res.json())
+                .then(res => console.log(res));
         }
+
 
         const vals = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
@@ -144,7 +172,7 @@
 </body>
 
 
-<button onclick="postInputSudoku()">Click me</button>
+<button onclick="postInputSudoku()">Submit current sudoku</button>
 
 <p id="demo"></p>
 
