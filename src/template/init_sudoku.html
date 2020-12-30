@@ -1,40 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="mystyle.css">
+    <link rel="stylesheet" href="/mystyle.css">
     <meta charset="UTF-8">
     <title>Title</title>
 
     <script>
-        function postInputSudoku() {
+        function getSolution() {
 
-            let i = 0;
-            let j = 0;
-            let grid = [];
+            let input="";
             document.querySelectorAll('.value').forEach(e => {
                 console.log(e.innerHTML);
                 let value = 0;
                 if (e.innerHTML) value = parseInt(e.innerHTML);
-                grid.push({row: j, column: i, value: value})
-                i = i + 1;
-                if (i === 9) {
-                    j = j + 1;
-                    i = 0;
-                }
+                input = input.concat(value);
             });
-            // request options
-            const options = {
-                method: 'POST',
-                body: JSON.stringify(grid),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
 
-// send POST request
-            fetch("/grid_send", options)
-                .then(res => res.json())
-                .then(res => console.log(res));
+            console.log(input);
+            window.location = "/get_solution/" + input;
         }
 
 
@@ -173,7 +156,7 @@
 </body>
 
 
-<button onclick="postInputSudoku()">Submit current sudoku</button>
+<button onclick="getSolution()">Get solution for current sudoku</button>
 
 <p id="demo"></p>
 

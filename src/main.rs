@@ -12,10 +12,6 @@ use actix_web::web::Json;
 use log::debug;
 use std::ops::Deref;
 
-#[derive(Deserialize)]
-struct Info {
-    username: String,
-}
 
 /// extract `Info` using serde
 async fn index() -> HttpResponse {
@@ -35,12 +31,18 @@ async fn style_sheet() -> HttpResponse {
         .body(style)
 }
 
-async fn grid_send(request: Json<Vec<Guess>>) -> impl Responder {
-    debug!("request is {:?}", request);
-    HttpResponse::Ok().body("got the request all right");
-    let grid = map_request_to_grid(&request.deref());
+async fn get_solution(path: web::Path<(String,)>) -> HttpResponse {
+    debug!("request is {:?}", path);
+    let sudoku = include_str!("template/result.html");
+
+    //for now we return this static result
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .body(sudoku)
+    //HttpResponse::Ok().body("got the request all right")
+    /*let grid = map_request_to_grid(&request.deref());
     validate_grid(&grid); //to do if grid is not valid return error.
-    let complete_grid = solve(grid);
+    let complete_grid = solve(grid);*/
 
 }
 
@@ -58,7 +60,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .route("/grid_send", web::post().to(grid_send))
+            .route("/get_solution/{input}", web::get().to(get_solution))
             .route("mystyle.css", web::get().to(style_sheet))
             .route("/", web::get().to(index))
     })
