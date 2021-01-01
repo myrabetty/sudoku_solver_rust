@@ -4,23 +4,20 @@ use crate::core::model::{NonEmptyCell, EmptyCell, Guess, GridFunctions};
 use crate::core::initialize_empty_cells::remove_placed_values;
 use crate::core::solver_helper::{initialize_empty_values, find_new_guess};
 use crate::core::utilities::get_quadrant;
-use crate::template::template::show_sudoku_state;
+use crate::template::template::show_sudoku_state_in_file;
 use crate::core::simple_coloring::apply_simple_coloring;
 
-
-pub fn solve(mut grid: Array2<NonEmptyCell>) -> Result<Array2<NonEmptyCell>, String> {
+///```returns a solved sudoku. If cannot find the solution will return the current sudoku state.
+pub fn solve(mut grid: Array2<NonEmptyCell>) -> Result<Array2<NonEmptyCell>, (Array2<NonEmptyCell>, Vec<EmptyCell>)> {
     let mut complements: Vec<(Array2<NonEmptyCell>, Vec<EmptyCell>, Guess)> = Vec::new();
     let mut guesses: Vec<EmptyCell> = initialize_empty_values(&grid);
     remove_placed_values(&grid, &mut guesses);
     while !grid.is_complete() {
         if guesses.is_empty() || is_a_guess_empty(&guesses) {
             let complement = complements.pop().unwrap();
-            // warn!("something is terribly wrong!");
-            // show_sudoku_state(&grid,  &guesses);
             warn!("taking complement for choice {:?} after ruling solution as invalid", complement.2);
             guesses = complement.1;
             grid = complement.0;
-            //return grid;
         }
 
         // whatever happens before I arrive here with a set of allowed values and a grid.
@@ -38,8 +35,7 @@ pub fn solve(mut grid: Array2<NonEmptyCell>) -> Result<Array2<NonEmptyCell>, Str
                 prepare_to_next_iteration(&mut guesses, &mut grid, &new_value);
             } else {
                 warn!("we cannot find a valid guess with the strategies implemented!");
-                show_sudoku_state(&grid, &guesses);
-                return Err(format!("cannot find a solution fo this input"));
+                return Err((grid, guesses));
             }
         }
     }
@@ -131,12 +127,12 @@ mod tests {
 
     #[test]
     fn solve_is_success() {
-        let input_data = read_input_file("samples/example_4.txt");
-        let grid = generate_grid(input_data);
+        let input_data = read_input_file("samples/example_5.txt");
+        let grid = generate_grid(&input_data);
         validate_grid(&grid);
         let complete_grid = solve(grid);
         let solution_input_data = read_input_file("samples/solution_example_4.txt");
-        let expected_grid = generate_grid(solution_input_data);
+        let expected_grid = generate_grid(&solution_input_data);
         assert_eq!(complete_grid.unwrap(), expected_grid);
     }
 }

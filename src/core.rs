@@ -2,7 +2,7 @@ mod initialize_empty_cells;
 pub mod initialize_grid;
 pub mod model;
 pub mod solver;
-mod solver_helper;
+pub mod solver_helper;
 pub(crate) mod utilities;
 pub mod validator;
 pub mod naked_tuplets_stategies;

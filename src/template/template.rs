@@ -24,7 +24,14 @@ struct Cell {
 }
 
 //```construct the current state of the sudoku given the current values and the unset possible values
-pub fn show_sudoku_state(grid: &Array2<NonEmptyCell>, allowed_values: &Vec<EmptyCell>) {
+pub fn show_sudoku_state_in_file(grid: &Array2<NonEmptyCell>, allowed_values: &Vec<EmptyCell>) {
+    let result = show_sudoku_state_in_html(grid, allowed_values);
+
+    let mut file = File::create("src/template/result.html").unwrap();
+    file.write(result.as_bytes());
+}
+
+pub fn show_sudoku_state_in_html(grid: &Array2<NonEmptyCell>, allowed_values: &Vec<EmptyCell>) -> String {
     let mut reg = Handlebars::new();
     let mut sudoku = Sudoku::default();
     reg.register_template_file("template", "src/template/grid_template.hbs").unwrap();
@@ -43,8 +50,7 @@ pub fn show_sudoku_state(grid: &Array2<NonEmptyCell>, allowed_values: &Vec<Empty
     }
 
     let result = reg.render("template", &json!(sudoku)).unwrap();
-    let mut file = File::create("src/template/result.html").unwrap();
-    file.write(result.as_bytes());
+    result
 }
 
 #[cfg(test)]
@@ -180,7 +186,7 @@ mod tests {
         allowed_values.push(EmptyCell::new(8, 3, vec![6, 8]));
         allowed_values.push(EmptyCell::new(8, 4, vec![1, 6, 7, 8]));
 
-        show_sudoku_state(&grid, &allowed_values);
+        show_sudoku_state_in_file(&grid, &allowed_values);
     }
 
 

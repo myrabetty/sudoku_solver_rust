@@ -3,14 +3,14 @@ use log::debug;
 use itertools::{Itertools, chain};
 
 pub fn apply_simple_coloring(guesses: &Vec<EmptyCell>) -> Option<Guess> {
-
-    let mut selected_element : EmptyCell = Default::default();
+    let mut selected_element: EmptyCell = Default::default();
     let mut connected_length = 0;
     let mut chain: Chain = Chain {
         init_cell: Default::default(),
         length: 0,
-        value: 0
+        value: 0,
     };
+
     for value in 1..10_u8 {
         let mut pairs: Vec<EmptyCell> = guesses.clone().into_iter().filter(|guess| guess.values.len() == 2 && guess.values.contains(&value)).collect();
 
@@ -36,16 +36,16 @@ pub fn apply_simple_coloring(guesses: &Vec<EmptyCell>) -> Option<Guess> {
         }
     }
 
-    return match chain.length {
-        2 => {
-            debug!("no simple colouring detected");
-            None
-        },
-        _ => {
+    return match chain.length > 2 {
+        true => {
             debug!("simple coloring for value {:} is a chain of length {:}", chain.value, chain.length);
             Some(Guess { row: chain.init_cell.row, column: chain.init_cell.column, value: chain.value })
         }
-    }
+        _ => {
+            debug!("no simple colouring detected");
+            None
+        }
+    };
 
 }
 
@@ -58,5 +58,5 @@ fn find_new_connect_element(selected_element: &EmptyCell, candidate_pairs: &Vec<
 struct Chain {
     pub init_cell: EmptyCell,
     pub length: usize,
-    pub value: u8
+    pub value: u8,
 }
