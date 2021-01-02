@@ -39,7 +39,14 @@ async fn get_solution(input: web::Path<String>) -> HttpResponse {
 
     let input_numbers: Vec<char> = input.chars().collect();
     let grid: Array2<NonEmptyCell> = generate_grid(&input_numbers);
-    validate_grid(&grid); //to do if grid is not valid return error.
+    match validate_grid(&grid){
+        Ok(())=>{},
+        Err(error)=>{
+            return HttpResponse::()
+                .content_type("text/html")
+                .body(error);
+        }
+    };
 
     let solution = solve(grid);
 
