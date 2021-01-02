@@ -1,4 +1,4 @@
-use itertools::{all, Itertools};
+use itertools::{Itertools};
 use log::debug;
 use ndarray::Array2;
 
@@ -84,18 +84,18 @@ fn returns_cell_with_unique_value(allowed_values: &Vec<EmptyCell>) -> Option<Gue
     for value in 1..10_u8 {
         for index in 0..9_usize {
             // debug!("checking number of appearances for value {:} in row {:}", value, index);
-            match find_unique_appearances(&allowed_values, &value, index, (|x: &EmptyCell, index: usize| (*x).row == index)) {
+            match find_unique_appearences(&allowed_values, &value, index, |x: &EmptyCell, index: usize| (*x).row == index) {
                 Some(guessed_value) => return Some(guessed_value),
                 None => {}
             }
 
             // debug!("checking number of appearances for value {:} in column {:}", value, index);
-            match find_unique_appearances(&allowed_values, &value, index, (|x: &EmptyCell, index: usize| (*x).column == index)) {
+            match find_unique_appearences(&allowed_values, &value, index, |x: &EmptyCell, index: usize| (*x).column == index) {
                 Some(guessed_value) => return Some(guessed_value),
                 None => {}
             }
             // debug!("checking number of appearances for value {:} in quadrant {:}", value, index);
-            match find_unique_appearances(&allowed_values, &value, index, (|x: &EmptyCell, index: usize| (*x).quadrant == index)) {
+            match find_unique_appearences(&allowed_values, &value, index, |x: &EmptyCell, index: usize| (*x).quadrant == index) {
                 Some(guessed_value) => return Some(guessed_value),
                 None => {}
             }
@@ -104,7 +104,7 @@ fn returns_cell_with_unique_value(allowed_values: &Vec<EmptyCell>) -> Option<Gue
     return None;
 }
 
-fn find_unique_appearances(guesses: &Vec<EmptyCell>, value: &u8, index: usize, filter: fn(&EmptyCell, usize) -> bool) -> Option<Guess> {
+fn find_unique_appearences(guesses: &Vec<EmptyCell>, value: &u8, index: usize, filter: fn(&EmptyCell, usize) -> bool) -> Option<Guess> {
     let number_of_appearances = guesses.iter()
         .filter(|&x| filter(&x, index) && (*x).values.contains(value))
         .count();
@@ -132,8 +132,8 @@ fn apply_two_cells_strategy(mut allowed_values: &mut Vec<EmptyCell>) -> Option<G
     // we need to apply this set of astrategies over and over again. Only stop if they removec nothing.
 
     let mut guess: Option<Guess> = None;
-    let mut valuesAreUpdated = true;
-    while guess.is_none() && valuesAreUpdated {
+    let mut values_are_updated = true;
+    while guess.is_none() && values_are_updated {
         let allowed_values_old = allowed_values.clone();
         remove_values_in_one_location_only(&mut allowed_values);
         hidden_pairs_strategy(&mut allowed_values);
@@ -141,10 +141,10 @@ fn apply_two_cells_strategy(mut allowed_values: &mut Vec<EmptyCell>) -> Option<G
         hidden_triplets_strategy(&mut allowed_values);
         x_wing_strategy(&mut allowed_values);
 
-        valuesAreUpdated = false;
+        values_are_updated = false;
         for i in 0..allowed_values_old.len() {
             if allowed_values_old[i].values != allowed_values[i].values {
-                valuesAreUpdated = true;
+                values_are_updated = true;
                 break;
             }
         }

@@ -4,6 +4,8 @@ use std::hash::Hash;
 use log::debug;
 
 use crate::core::model::EmptyCell;
+use std::fs::File;
+use std::io::Read;
 
 //``` returns the quadrant value given the row and the column.
 pub fn get_quadrant(i: usize, j: usize) -> usize {
@@ -29,6 +31,15 @@ pub fn iters_equal_any_order<T: Eq + Hash>(i1: impl Iterator<Item=T>, i2: impl I
         lookup
     }
     get_lookup(i1) == get_lookup(i2)
+}
+
+
+// this is going to be used only for tenting purposes until I change the input to a json file
+pub fn read_input_file(filename: &str) -> Vec<char> {
+    let mut file = File::open(filename).expect("File not found");
+    let mut content = String::new();
+    file.read_to_string(&mut content).expect("Content not found");
+    content.chars().filter(|&char| char != ' ' && char != '\n' && char != ',' && char != '\r').collect()
 }
 
 #[cfg(test)]

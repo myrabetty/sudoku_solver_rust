@@ -4,7 +4,6 @@ use crate::core::model::{NonEmptyCell, EmptyCell, Guess, GridFunctions};
 use crate::core::initialize_empty_cells::remove_placed_values;
 use crate::core::solver_helper::{initialize_empty_values, find_new_guess};
 use crate::core::utilities::get_quadrant;
-use crate::template::template::show_sudoku_state_in_file;
 use crate::core::simple_coloring::apply_simple_coloring;
 
 ///```returns a solved sudoku. If cannot find the solution will return the current sudoku state.
@@ -99,8 +98,8 @@ fn get_complement_choice(current_options: &Vec<EmptyCell>, choice: &Guess) -> Ve
 mod tests {
     use super::*;
     use crate::core::model::{EmptyCell, EmptyCellFunctions, Guess};
-    use crate::core::utilities::iters_equal_any_order;
-    use crate::core::initialize_grid::{read_input_file, generate_grid};
+    use crate::core::utilities::{iters_equal_any_order, read_input_file};
+    use crate::core::initialize_grid::{generate_grid};
     use crate::core::validator::validate_grid;
     use itertools::assert_equal;
 

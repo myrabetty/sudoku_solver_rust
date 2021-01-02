@@ -1,20 +1,6 @@
-use std::fs::File;
-use std::io::{Read, Write};
-
 use ndarray::Array2;
+use crate::core::model::{NonEmptyCell, GridFunctions};
 
-use crate::core::model::{NonEmptyCell, GridFunctions, Guess};
-
-
-// this is going to be used only for tenting purposes until I change the input to a json file
-pub fn read_input_file(filename: &str) -> Vec<char> {
-    let mut file = File::open(filename).expect("File not found");
-    let mut content = String::new();
-    file.read_to_string(&mut content).expect("Content not found");
-    content.chars().collect()
-}
-
-// this is going to be used only for testing purposes maybe??
 pub fn generate_grid(input_data: &Vec<char>) -> Array2<NonEmptyCell> {
     let mut grid: Array2<NonEmptyCell> = Array2::default((9, 9));
     grid.add_quadrants_information();
@@ -43,8 +29,6 @@ fn assign_value_and_increase_index(grid: &mut Array2<NonEmptyCell>, i: &mut usiz
         let b = a as u8 - '0' as u8;
         grid[[*i, *j]].value = b;
         Ok(*j + 1)
-    } else if a == ' ' || a == '\n' || a == ',' || a == '\r' {
-        Ok(*j)
     } else {
         Err(format!("character {} not allowed", a))
     };

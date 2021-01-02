@@ -1,5 +1,5 @@
 use sudoku_solver::core::initialize_grid;
-use sudoku_solver::core::initialize_grid::{read_input_file, generate_grid};
+use sudoku_solver::core::initialize_grid::{generate_grid};
 use sudoku_solver::core::solver::solve;
 use sudoku_solver::core::validator::validate_grid;
 use sudoku_solver::template::template::{show_sudoku_state_in_html};
@@ -11,7 +11,6 @@ use serde::Deserialize;
 use actix_web::body::Body;
 use actix_web::web::Json;
 use log::debug;
-use std::ops::Deref;
 use std::str::Chars;
 use std::borrow::Borrow;
 use ndarray::Array2;
@@ -61,14 +60,6 @@ async fn get_solution(input: web::Path<String>) -> HttpResponse {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init();
-    /*let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-    let input_data = read_input_file(filename);
-    let grid = generate_grid(input_data);
-    validate_grid(&grid);
-    let complete_grid = solve(grid);
-    show_sudoku_state(&complete_grid, &Vec::new());
-    return Ok(());*/
 
     HttpServer::new(|| {
         App::new()

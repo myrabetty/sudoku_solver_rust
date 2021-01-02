@@ -1,7 +1,6 @@
 use ndarray::Array2;
 use crate::core::model::{NonEmptyCell, EmptyCell, GridFunctions};
 
-
 // ```given a grid returns for each empty cell the possible values.
 pub fn remove_placed_values(grid: &Array2<NonEmptyCell>, guesses: &mut Vec<EmptyCell>) {
     guesses.iter_mut().for_each(|mut guess| {
