@@ -16,7 +16,6 @@ use std::borrow::Borrow;
 use ndarray::Array2;
 
 
-/// extract `Info` using serde
 async fn index() -> HttpResponse {
     let sudoku = include_str!("template/init_sudoku.html");
 
@@ -25,7 +24,6 @@ async fn index() -> HttpResponse {
         .body(sudoku)
 }
 
-/// extract `Info` using serde
 async fn style_sheet() -> HttpResponse {
     let style = include_str!("template/mystyle.css");
 
@@ -42,7 +40,7 @@ async fn get_solution(input: web::Path<String>) -> HttpResponse {
     match validate_grid(&grid){
         Ok(())=>{},
         Err(error)=>{
-            return HttpResponse::()
+            return HttpResponse::Ok()
                 .content_type("text/html")
                 .body(error);
         }

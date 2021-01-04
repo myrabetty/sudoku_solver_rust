@@ -2,32 +2,51 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="/mystyle.css">
+    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA/wAAAA0MDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEREREREREREQAAEAABAAARAAAQAAEAABEAABAAAQAAEQAAEAABAAAREREREREREREAABAAAQAAEQAAEAIBAAARAAAQAgEAABEAABAAAQAAERERERERERERAAAQAAEAABECIBAAAQAAEQIgEAABAiARAAAQAAEAABEREREREREREAAAAAe94AAHveAAB73gAAe94AAAAAAAB73gAAe14AAHteAAB73gAAAAAAAHveAABL3gAAS9IAAHveAAAAAAAA" rel="icon" type="image/x-icon" />
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Sudoku solver</title>
 
     <script>
         function getSolution() {
 
             let input = new Array(81);
             document.querySelectorAll('.value').forEach(e => {
-                console.log(e.innerHTML);
                 let value = 0;
                 if (e.innerHTML) value = parseInt(e.innerHTML);
-                input[e.id]=value;
+                input[e.getAttribute('data-id')] = value;
             });
-
-            console.log(input);
             window.location = "/get_solution/" + input.join('');
         }
 
         const vals = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-        // todo: handle backspace
         function verifyValue(event) {
             console.log(event);
+            let quadrant = event.target.getAttribute('data-quadrant');
+            let row = event.target.getAttribute('data-row');
+            let column = event.target.getAttribute('data-column');
+
             if (vals.includes(event.key)) {
-                event.target.innerHTML = event.key;
+                const matching = Array.from(document.querySelectorAll('.value')).find(e => {
+                    return (e.getAttribute('data-quadrant') === quadrant || e.getAttribute('data-row') === row || e.getAttribute('data-column') === column) && event.key === e.innerHTML;
+                });
+
+                if (matching) {
+                    console.log(matching);
+                    matching.classList.remove("show-duplicate");
+                    console.log(matching);
+                    window.requestAnimationFrame(function(_) {
+                        window.requestAnimationFrame(function(_) {
+                            matching.classList.add("show-duplicate");
+                        });
+                    });
+
+                } else {
+                    console.log(matching);
+                    event.target.innerHTML = event.key;
+                }
             }
+
 
             if (event.key === "Backspace") {
                 event.target.innerHTML = "";
@@ -49,111 +68,111 @@
 <div class="grid" id="grid">
 
     <div class="quadrant" id="quadrant_1">
-        <div class="value" id=1 contenteditable="true"></div>
-        <div class="value" id=2 contenteditable="true"></div>
-        <div class="value" id=3 contenteditable="true"></div>
-        <div class="value" id=10 contenteditable="true"></div>
-        <div class="value" id=11 contenteditable="true"></div>
-        <div class="value" id=12 contenteditable="true"></div>
-        <div class="value" id=19 contenteditable="true"></div>
-        <div class="value" id=20 contenteditable="true"></div>
-        <div class="value" id=21 contenteditable="true"></div>
+        <div class="value" data-id=1 data-quadrant=1 data-row=1 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=2 data-quadrant=1 data-row=1 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=3 data-quadrant=1 data-row=1 data-column=3 contenteditable="true"></div>
+        <div class="value" data-id=10 data-quadrant=1 data-row=2 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=11 data-quadrant=1 data-row=2 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=12 data-quadrant=1 data-row=2 data-column=3 contenteditable="true"></div>
+        <div class="value" data-id=19 data-quadrant=1 data-row=3 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=20 data-quadrant=1 data-row=3 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=21 data-quadrant=1 data-row=3 data-column=3 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_2">
-        <div class="value" id=4 contenteditable="true"></div>
-        <div class="value" id=5 contenteditable="true"></div>
-        <div class="value" id=6 contenteditable="true"></div>
-        <div class="value" id=13 contenteditable="true"></div>
-        <div class="value" id=14 contenteditable="true"></div>
-        <div class="value" id=15 contenteditable="true"></div>
-        <div class="value" id=22 contenteditable="true"></div>
-        <div class="value" id=23 contenteditable="true"></div>
-        <div class="value" id=24 contenteditable="true"></div>
+        <div class="value" data-id=4 data-quadrant=1 data-row=1 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=5 data-quadrant=1 data-row=1 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=6 data-quadrant=1 data-row=1 data-column=6 contenteditable="true"></div>
+        <div class="value" data-id=13 data-quadrant=1 data-row=2 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=14 data-quadrant=1 data-row=2 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=15 data-quadrant=1 data-row=2 data-column=6 contenteditable="true"></div>
+        <div class="value" data-id=22 data-quadrant=1 data-row=3 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=23 data-quadrant=1 data-row=3 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=24 data-quadrant=1 data-row=3 data-column=6 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_3">
-        <div class="value" id=7 contenteditable="true"></div>
-        <div class="value" id=8 contenteditable="true"></div>
-        <div class="value" id=9 contenteditable="true"></div>
-        <div class="value" id=16 contenteditable="true"></div>
-        <div class="value" id=17 contenteditable="true"></div>
-        <div class="value" id=18 contenteditable="true"></div>
-        <div class="value" id=25 contenteditable="true"></div>
-        <div class="value" id=26 contenteditable="true"></div>
-        <div class="value" id=27 contenteditable="true"></div>
+        <div class="value" data-id=7 data-quadrant=1 data-row=1 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=8 data-quadrant=1 data-row=1 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=9 data-quadrant=1 data-row=1 data-column=9 contenteditable="true"></div>
+        <div class="value" data-id=16 data-quadrant=1 data-row=2 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=17 data-quadrant=1 data-row=2 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=18 data-quadrant=1 data-row=2 data-column=9 contenteditable="true"></div>
+        <div class="value" data-id=25 data-quadrant=1 data-row=3 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=26 data-quadrant=1 data-row=3 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=27 data-quadrant=1 data-row=3 data-column=9 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_4">
-        <div class="value" id=28 contenteditable="true"></div>
-        <div class="value" id=29 contenteditable="true"></div>
-        <div class="value" id=30 contenteditable="true"></div>
-        <div class="value" id=37 contenteditable="true"></div>
-        <div class="value" id=38 contenteditable="true"></div>
-        <div class="value" id=39 contenteditable="true"></div>
-        <div class="value" id=46 contenteditable="true"></div>
-        <div class="value" id=47 contenteditable="true"></div>
-        <div class="value" id=48 contenteditable="true"></div>
+        <div class="value" data-id=28 data-quadrant=1 data-row=4 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=29 data-quadrant=1 data-row=4 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=30 data-quadrant=1 data-row=4 data-column=3 contenteditable="true"></div>
+        <div class="value" data-id=37 data-quadrant=1 data-row=5 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=38 data-quadrant=1 data-row=5 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=39 data-quadrant=1 data-row=5 data-column=3 contenteditable="true"></div>
+        <div class="value" data-id=46 data-quadrant=1 data-row=6 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=47 data-quadrant=1 data-row=6 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=48 data-quadrant=1 data-row=6 data-column=3 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_5">
-        <div class="value" id=31 contenteditable="true"></div>
-        <div class="value" id=32 contenteditable="true"></div>
-        <div class="value" id=33 contenteditable="true"></div>
-        <div class="value" id=40 contenteditable="true"></div>
-        <div class="value" id=41 contenteditable="true"></div>
-        <div class="value" id=42 contenteditable="true"></div>
-        <div class="value" id=49 contenteditable="true"></div>
-        <div class="value" id=50 contenteditable="true"></div>
-        <div class="value" id=51 contenteditable="true"></div>
+        <div class="value" data-id=31 data-quadrant=1 data-row=4 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=32 data-quadrant=1 data-row=4 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=33 data-quadrant=1 data-row=4 data-column=6 contenteditable="true"></div>
+        <div class="value" data-id=40 data-quadrant=1 data-row=5 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=41 data-quadrant=1 data-row=5 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=42 data-quadrant=1 data-row=5 data-column=6 contenteditable="true"></div>
+        <div class="value" data-id=49 data-quadrant=1 data-row=6 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=50 data-quadrant=1 data-row=6 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=51 data-quadrant=1 data-row=6 data-column=6 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id=quadrant_6">
-        <div class="value" id=34 contenteditable="true"></div>
-        <div class="value" id=35 contenteditable="true"></div>
-        <div class="value" id=36 contenteditable="true"></div>
-        <div class="value" id=43 contenteditable="true"></div>
-        <div class="value" id=44 contenteditable="true"></div>
-        <div class="value" id=45 contenteditable="true"></div>
-        <div class="value" id=52 contenteditable="true"></div>
-        <div class="value" id=53 contenteditable="true"></div>
-        <div class="value" id=54 contenteditable="true"></div>
+        <div class="value" data-id=34 data-quadrant=1 data-row=4 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=35 data-quadrant=1 data-row=4 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=36 data-quadrant=1 data-row=4 data-column=9 contenteditable="true"></div>
+        <div class="value" data-id=43 data-quadrant=1 data-row=5 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=44 data-quadrant=1 data-row=5 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=45 data-quadrant=1 data-row=5 data-column=9 contenteditable="true"></div>
+        <div class="value" data-id=52 data-quadrant=1 data-row=6 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=53 data-quadrant=1 data-row=6 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=54 data-quadrant=1 data-row=6 data-column=9 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_7">
-        <div class="value" id=55 contenteditable="true"></div>
-        <div class="value" id=56 contenteditable="true"></div>
-        <div class="value" id=57 contenteditable="true"></div>
-        <div class="value" id=64 contenteditable="true"></div>
-        <div class="value" id=65 contenteditable="true"></div>
-        <div class="value" id=66 contenteditable="true"></div>
-        <div class="value" id=73 contenteditable="true"></div>
-        <div class="value" id=74 contenteditable="true"></div>
-        <div class="value" id=75 contenteditable="true"></div>
+        <div class="value" data-id=55 data-quadrant=1 data-row=7 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=56 data-quadrant=1 data-row=7 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=57 data-quadrant=1 data-row=7 data-column=3 contenteditable="true"></div>
+        <div class="value" data-id=64 data-quadrant=1 data-row=8 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=65 data-quadrant=1 data-row=8 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=66 data-quadrant=1 data-row=8 data-column=3 contenteditable="true"></div>
+        <div class="value" data-id=73 data-quadrant=1 data-row=9 data-column=1 contenteditable="true"></div>
+        <div class="value" data-id=74 data-quadrant=1 data-row=9 data-column=2 contenteditable="true"></div>
+        <div class="value" data-id=75 data-quadrant=1 data-row=9 data-column=3 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_8">
-        <div class="value" id=58 contenteditable="true"></div>
-        <div class="value" id=59 contenteditable="true"></div>
-        <div class="value" id=60 contenteditable="true"></div>
-        <div class="value" id=67 contenteditable="true"></div>
-        <div class="value" id=68 contenteditable="true"></div>
-        <div class="value" id=69 contenteditable="true"></div>
-        <div class="value" id=76 contenteditable="true"></div>
-        <div class="value" id=77 contenteditable="true"></div>
-        <div class="value" id=78 contenteditable="true"></div>
+        <div class="value" data-id=58 data-quadrant=1 data-row=7 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=59 data-quadrant=1 data-row=7 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=60 data-quadrant=1 data-row=7 data-column=6 contenteditable="true"></div>
+        <div class="value" data-id=67 data-quadrant=1 data-row=8 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=68 data-quadrant=1 data-row=8 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=69 data-quadrant=1 data-row=8 data-column=6 contenteditable="true"></div>
+        <div class="value" data-id=76 data-quadrant=1 data-row=9 data-column=4 contenteditable="true"></div>
+        <div class="value" data-id=77 data-quadrant=1 data-row=9 data-column=5 contenteditable="true"></div>
+        <div class="value" data-id=78 data-quadrant=1 data-row=9 data-column=6 contenteditable="true"></div>
     </div>
 
     <div class="quadrant" id="quadrant_9">
-        <div class="value" id=61 contenteditable="true"></div>
-        <div class="value" id=62 contenteditable="true"></div>
-        <div class="value" id=63 contenteditable="true"></div>
-        <div class="value" id=70 contenteditable="true"></div>
-        <div class="value" id=71 contenteditable="true"></div>
-        <div class="value" id=72 contenteditable="true"></div>
-        <div class="value" id=79 contenteditable="true"></div>
-        <div class="value" id=80 contenteditable="true"></div>
-        <div class="value" id=81 contenteditable="true"></div>
+        <div class="value" data-id=61 data-quadrant=1 data-row=7 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=62 data-quadrant=1 data-row=7 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=63 data-quadrant=1 data-row=7 data-column=9 contenteditable="true"></div>
+        <div class="value" data-id=70 data-quadrant=1 data-row=8 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=71 data-quadrant=1 data-row=8 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=72 data-quadrant=1 data-row=8 data-column=9 contenteditable="true"></div>
+        <div class="value" data-id=79 data-quadrant=1 data-row=9 data-column=7 contenteditable="true"></div>
+        <div class="value" data-id=80 data-quadrant=1 data-row=9 data-column=8 contenteditable="true"></div>
+        <div class="value" data-id=81 data-quadrant=1 data-row=9 data-column=9 contenteditable="true"></div>
     </div>
 
 </div>

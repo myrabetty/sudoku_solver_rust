@@ -37,6 +37,18 @@
     caret-color: transparent;
 }
 
+
+.show-duplicate {
+    animation: color-change 1s 2;
+}
+
+@keyframes color-change {
+    0% { background-color: red; }
+    50% { background-color: white; }
+    100% { background-color: red; }
+}
+
+
 .value:focus {
   background-color: aquamarine;
 }
