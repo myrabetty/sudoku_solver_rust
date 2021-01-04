@@ -32,9 +32,10 @@
                 });
 
                 if (matching) {
-                    console.log(matching);
                     matching.classList.remove("show-duplicate");
-                    console.log(matching);
+
+                    //you need to have a delay otherwise readding the class will not work/
+                    //see also: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Animations/Tips
                     window.requestAnimationFrame(function(_) {
                         window.requestAnimationFrame(function(_) {
                             matching.classList.add("show-duplicate");
@@ -42,7 +43,6 @@
                     });
 
                 } else {
-                    console.log(matching);
                     event.target.innerHTML = event.key;
                 }
             }
@@ -60,7 +60,6 @@
         }
 
         window.onload = afterLoad;
-
     </script>
 
 </head>
